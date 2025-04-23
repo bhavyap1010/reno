@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Profile, businessProfile, serviceRequest
+from .models import Review
 
 
 class SignUpForm(forms.ModelForm):
@@ -27,7 +28,7 @@ class SignUpForm(forms.ModelForm):
         widget=forms.Select(attrs={
             'class': 'select_option',
         })
-    )    
+    )
 
     class Meta:
         model = User
@@ -52,7 +53,7 @@ class SignUpForm(forms.ModelForm):
         if password1 != password2:
             raise forms.ValidationError("Passwords don't match")
         return password2
-    
+
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(
         widget=forms.TextInput(attrs={
@@ -64,7 +65,7 @@ class CustomAuthenticationForm(AuthenticationForm):
             'placeholder': 'Password',
         })
     )
-    
+
 class VerificationCodeForm(forms.Form):
     code = forms.CharField(label='Code', max_length=6, widget=forms.TextInput(attrs={'placeholder': 'Enter verification code'}))
 
@@ -78,3 +79,7 @@ class servicerequestform(forms.ModelForm):
         model = serviceRequest
         fields = ['title', 'services_needed', 'location', 'description']
 
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['rating', 'comment']

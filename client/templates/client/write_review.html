@@ -1,0 +1,11 @@
+{% extends 'client/base.html' %}
+{% block content %}
+  <h2>Write a Review for {{ business.name }}</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Review</button>
+  </form>
+  <a href="{% url 'home' %}">Back to Dashboard</a>
+{% endblock %}

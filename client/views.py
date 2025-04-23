@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm, BusinessProfileForm, servicerequestform
+from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm, BusinessProfileForm, servicerequestform, ReviewForm
 from .emailVerification import AccountActivationManager
-from .models import businessProfile, serviceRequest
+from .models import businessProfile, serviceRequest, Review
 from django.contrib.auth.decorators import login_required
 
 
@@ -127,3 +127,19 @@ def create_service_request(request):
         form = servicerequestform()
     return render(request, 'client/service_request_form.html', {'form': form})
 
+@login_required
+def write_review(request, business_id):
+    business = get_object_or_404(businessProfile, id=business_id)
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.business = business
+            review.user = request.user
+            review.save()
+            return redirect('home')  # Or redirect to business detail
+    else:
+        form = ReviewForm()
+
+    return render(request, 'client/write_review.html', {'form': form, 'business': business})

@@ -36,7 +36,8 @@
         <li>
             <strong>{{ business.name }}</strong><br>
             Services: {{ business.services }}<br>
-            Location: {{ business.service_location }}
+            Location: {{ business.service_location }}<br>
+            <a href="{% url 'write-review' business.id %}">Write a Review</a>
         </li>
         {% empty %}
         <li>No businesses available.</li>
