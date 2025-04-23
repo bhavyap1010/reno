@@ -1,10 +1,12 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
 </head>
+
 <body>
     <h1>Dashboard</h1>
 
@@ -14,13 +16,42 @@
     </form>
 
     {% if user.profile.account_type == 'business' %}
-        <form action="{% url 'business-profile' %}" method="get">
-            <button type="submit">Create Business Listing</button>
-        </form>
+    <form action="{% url 'business-profile' %}" method="get">
+        <button type="submit">Create Business Listing</button>
+    </form>
     {% endif %}
 
     <form action="{% url 'request-service' %}" method="get">
         <button type="submit">Request a Service</button>
     </form>
+
+    <h2>Businesses</h2>
+    <ul>
+        {% for business in businesses %}
+        <li>
+            <strong>{{ business.name }}</strong><br>
+            Services: {{ business.services }}<br>
+            Location: {{ business.service_location }}
+        </li>
+        {% empty %}
+        <li>No businesses available.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Service Requests</h2>
+    <ul>
+        {% for request in service_requests %}
+        <li>
+            <strong>{{ request.title }}</strong><br>
+            Needed Services: {{ request.services_needed }}<br>
+            Location: {{ request.location }}<br>
+            Description: {{ request.description }}
+        </li>
+        {% empty %}
+        <li>No service requests found.</li>
+        {% endfor %}
+    </ul>
+
 </body>
+
 </html>

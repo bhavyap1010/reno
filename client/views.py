@@ -8,11 +8,18 @@ from django.contrib.auth.decorators import login_required
 
 
 def home(request):
-    
+    businesses = businessProfile.objects.all()
+    service_requests = serviceRequest.objects.all()
+
+    context = {
+        'businesses': businesses,
+        'service_requests': service_requests
+    }
+
     if not request.user.is_authenticated:
         return redirect("register")
 
-    return render(request, "client/home.html")
+    return render(request, 'client/home.html', context)
 
 def register(request):
     if request.method == 'POST':
