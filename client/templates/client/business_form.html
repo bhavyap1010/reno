@@ -5,4 +5,9 @@
     {{ form.as_p }}
     <button type="submit">Save</button>
   </form>
+
+  <form action="{% url 'home' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Home</button>
+  </form>
 {% endblock %}
