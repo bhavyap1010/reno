@@ -104,11 +104,11 @@ def signIn(request):
 def create_or_edit_business_profile(request):
     profile, created = businessProfile.objects.get_or_create(user=request.user)
 
-    if request.method == 'post':
-        form = BusinessProfileForm(request.post, instance=profile)
+    if request.method == 'POST':
+        form = BusinessProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('profile-success')  # replace with your desired redirect
+            return redirect('home')
     else:
         form = BusinessProfileForm(instance=profile)
 
@@ -116,13 +116,13 @@ def create_or_edit_business_profile(request):
 
 @login_required
 def create_service_request(request):
-    if request.method == 'post':
-        form = servicerequestform(request.post)
+    if request.method == 'POST':
+        form = servicerequestform(request.POST)
         if form.is_valid():
             service_request = form.save(commit=False)
             service_request.user = request.user
             service_request.save()
-            return redirect('request-success')  # replace with your success view name
+            return redirect('home')
     else:
         form = servicerequestform()
     return render(request, 'client/service_request_form.html', {'form': form})
