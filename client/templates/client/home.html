@@ -1,13 +1,6 @@
-<!doctype html>
-<html lang="en">
+{% extends 'client/base.html' %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-</head>
-
-<body>
+{% block content %}
     <h1>Dashboard</h1>
 
     <form class="search" action="{% url 'home' %}" method="get">
@@ -37,7 +30,7 @@
             <strong>{{ business.name }}</strong><br>
             Services: {{ business.services }}<br>
             Location: {{ business.service_location }}<br>
-            <a href="{% url 'write-review' business.id %}">Write a Review</a>
+            <a href="{% url 'write-review' business.id %}">Review</a>
         </li>
         {% empty %}
         <li>No businesses available.</li>
@@ -57,7 +50,4 @@
         <li>No service requests found.</li>
         {% endfor %}
     </ul>
-
-</body>
-
-</html>
+{% endblock %}
