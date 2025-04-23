@@ -8,72 +8,78 @@ from django.contrib.auth.decorators import login_required
 
 
 def home(request):
+    if not request.user.is_authenticated:
+        return redirect("register")
+
+    query = request.GET.get('q')  # Get the search term from the query string
+
     businesses = businessProfile.objects.all()
-    service_requests = serviceRequest.objects.all()
+
+    if query:
+        service_requests = serviceRequest.objects.filter(title__icontains=query)
+    else:
+        service_requests = serviceRequest.objects.all()
 
     context = {
         'businesses': businesses,
         'service_requests': service_requests
     }
 
-    if not request.user.is_authenticated:
-        return redirect("register")
-
     return render(request, 'client/home.html', context)
 
 def register(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
-        
+
         # Check if the email already exists
         email = form.cleaned_data.get('email') if form.is_valid() else None
         if email and User.objects.filter(email=email).exists():
             form.add_error('email', 'An account with this email already exists.')
-        
+
         if form.is_valid():
             user = form.save()
             login(request, user)
-            
+
             recipient_email = form.cleaned_data.get('email')
             account_activation_manager = AccountActivationManager()
             subject = "Verification Email From Business Idea"
             verification_code = account_activation_manager.token_generator()
             request.session['verification_code'] = verification_code
             body = verification_code
-            
-            account_activation_manager.send_email(subject, body, recipient_email)  
+
+            account_activation_manager.send_email(subject, body, recipient_email)
             return redirect('/verify')
-        
+
     else:
         form = SignUpForm()
-    
+
     return render(request, 'client/signUp.html', {'form': form})
 
 def verify(request):
-    
+
     verification_code = request.session.get('verification_code')
-    
+
     if request.method == 'POST':
         form = VerificationCodeForm(request.POST)
         if form.is_valid():
-            
+
             user_reply = form.cleaned_data.get('code').strip()  # Strip any extra spaces
             verification_code = str(verification_code).strip() if verification_code is not None else None
-            
+
             if str(user_reply) == str(verification_code):
-                                
+
                 profile = request.user.profile
                 profile.email_is_verified = True
                 profile.save()  # Save the updated profile
-          
+
                 return redirect('/home')
             else:
                 # Verification failed
                 form.add_error('code', 'Invalid verification code')
-    
+
     else:
         form = VerificationCodeForm()
-    
+
     return render(request, 'client/verify.html', {'form': form})
 
 def signIn(request):

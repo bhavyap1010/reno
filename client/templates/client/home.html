@@ -10,6 +10,11 @@
 <body>
     <h1>Dashboard</h1>
 
+    <form class="search" action="{% url 'home' %}" method="get">
+        <input type="text" name="q">
+        <button type="submit">Search</button>
+    </form>
+
     <form action="{% url 'logout-user' %}" method="post">
         {% csrf_token %}
         <button type="submit">Logout</button>
