@@ -9,7 +9,7 @@ urlpatterns = [
     path("login/", views.signIn, name="login"),
     path("verify/", views.verify, name="verify"),
     path("home/", views.home, name="home"),  
-    path("logout/", views.signIn, name="logout-user"),  # Add this line
+    path("logout/", LogoutView.as_view(next_page="register"), name="logout-user"),  # Add this line
 
 
 
