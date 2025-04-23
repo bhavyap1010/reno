@@ -11,6 +11,8 @@ urlpatterns = [
     path("home/", views.home, name="home"),  
     path("logout/", LogoutView.as_view(next_page="register"), name="logout-user"),  # Add this line
     path('business-profile/', views.create_or_edit_business_profile, name='business-profile'),
+    path('request-service/', views.create_service_request, name='request-service'),
+
 
 
 

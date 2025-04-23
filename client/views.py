@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm, BusinessProfileForm
+from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm, BusinessProfileForm, servicerequestform
 from .emailVerification import AccountActivationManager
-from .models import businessProfile
+from .models import businessProfile, serviceRequest
 from django.contrib.auth.decorators import login_required
 
 
@@ -100,3 +100,17 @@ def create_or_edit_business_profile(request):
         form = BusinessProfileForm(instance=profile)
 
     return render(request, 'client/business_form.html', {'form': form})
+
+@login_required
+def create_service_request(request):
+    if request.method == 'post':
+        form = servicerequestform(request.post)
+        if form.is_valid():
+            service_request = form.save(commit=False)
+            service_request.user = request.user
+            service_request.save()
+            return redirect('request-success')  # replace with your success view name
+    else:
+        form = servicerequestform()
+    return render(request, 'client/service_request_form.html', {'form': form})
+

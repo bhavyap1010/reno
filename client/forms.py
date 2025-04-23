@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Profile, businessProfile
+from .models import Profile, businessProfile, serviceRequest
 
 
 class SignUpForm(forms.ModelForm):
@@ -72,4 +72,9 @@ class BusinessProfileForm(forms.ModelForm):
     class Meta:
         model = businessProfile
         fields = ['name', 'services', 'service_location']
+
+class servicerequestform(forms.ModelForm):
+    class Meta:
+        model = serviceRequest
+        fields = ['title', 'services_needed', 'location', 'description']
 
