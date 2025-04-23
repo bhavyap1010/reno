@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm
+from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm, BusinessProfileForm
 from .emailVerification import AccountActivationManager
+from .models import businessProfile
+from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -84,3 +86,17 @@ def signIn(request):
         form = CustomAuthenticationForm()
 
     return render(request, 'client/login.html', {'form': form})
+
+@login_required
+def create_or_edit_business_profile(request):
+    profile, created = businessProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'post':
+        form = BusinessProfileForm(request.post, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile-success')  # replace with your desired redirect
+    else:
+        form = BusinessProfileForm(instance=profile)
+
+    return render(request, 'client/business_form.html', {'form': form})

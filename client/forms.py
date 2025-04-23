@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Profile
+from .models import Profile, businessProfile
 
 
 class SignUpForm(forms.ModelForm):
@@ -53,7 +53,6 @@ class SignUpForm(forms.ModelForm):
             raise forms.ValidationError("Passwords don't match")
         return password2
     
-    
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(
         widget=forms.TextInput(attrs={
@@ -68,3 +67,9 @@ class CustomAuthenticationForm(AuthenticationForm):
     
 class VerificationCodeForm(forms.Form):
     code = forms.CharField(label='Code', max_length=6, widget=forms.TextInput(attrs={'placeholder': 'Enter verification code'}))
+
+class BusinessProfileForm(forms.ModelForm):
+    class Meta:
+        model = businessProfile
+        fields = ['name', 'services', 'service_location']
+
