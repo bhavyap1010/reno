@@ -143,3 +143,11 @@ def write_review(request, business_id):
         form = ReviewForm()
 
     return render(request, 'client/write_review.html', {'form': form, 'business': business})
+
+def business_detail(request, business_id):
+    business = get_object_or_404(businessProfile, id=business_id)
+    reviews = business.reviews.all()  # reverse relationship via related_name='reviews'
+    return render(request, 'client/business_detail.html', {
+        'business': business,
+        'reviews': reviews
+    })

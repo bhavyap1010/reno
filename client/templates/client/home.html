@@ -27,7 +27,11 @@
     <ul>
         {% for business in businesses %}
         <li>
-            <strong>{{ business.name }}</strong><br>
+            <strong>
+                <a href="{% url 'business-detail' business.id %}">
+                    {{ business.name }}
+                </a>
+            </strong><br>
             Services: {{ business.services }}<br>
             Location: {{ business.service_location }}<br>
             <a href="{% url 'write-review' business.id %}">Review</a>

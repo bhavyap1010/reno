@@ -1,0 +1,29 @@
+{% extends 'client/base.html' %}
+
+{% block content %}
+    <h2>{{ business.name }}</h2>
+    <p>Services: {{ business.services }}</p>
+    <p>Location: {{ business.service_location }}</p>
+
+    <h3>Reviews</h3>
+    <ul>
+        {% for review in reviews %}
+        <li>
+            <strong>{{ review.user.username }}</strong> rated {{ review.rating }}/5<br>
+            "{{ review.comment }}"
+        </li>
+        {% empty %}
+        <li>No reviews yet. <a href="{% url 'write-review' business.id %}">Be the first to review!</a></li>
+        {% endfor %}
+    </ul>
+
+    <form action="{% url 'write-review' business.id %}" method="get">
+        <button type="submit">Write a Review</button>
+    </form>
+
+    <br>
+
+    <form action="{% url 'home' %}" method="get">
+        <button type="submit">Back to Dashboard</button>
+    </form>
+{% endblock %}

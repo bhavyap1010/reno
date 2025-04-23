@@ -7,5 +7,10 @@
     {{ form.as_p }}
     <button type="submit">Submit Review</button>
   </form>
-  <a href="{% url 'home' %}">Back to Dashboard</a>
+
+  <br>
+
+  <form action="{% url 'home' %}" method="get">
+      <button type="submit">Back to Dashboard</button>
+  </form>
 {% endblock %}
