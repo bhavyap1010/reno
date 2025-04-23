@@ -1,15 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
 </head>
 <body>
-    <h1> Dashboard </h1>
+    <h1>Dashboard</h1>
+
     <form action="{% url 'logout-user' %}" method="post">
         {% csrf_token %}
         <button type="submit">Logout</button>
+    </form>
+
+    {% if user.profile.account_type == 'business' %}
+        <form action="{% url 'business-profile' %}" method="get">
+            <button type="submit">Create Business Listing</button>
+        </form>
+    {% endif %}
+
+    <form action="{% url 'request-service' %}" method="get">
+        <button type="submit">Request a Service</button>
     </form>
 </body>
 </html>
