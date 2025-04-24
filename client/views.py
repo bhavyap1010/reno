@@ -163,7 +163,7 @@ def chatPage(request, room_name):
         'username': request.user.username,
         'other_user': other_user 
     }
-     
+    
     other_user = get_object_or_404(User, username=other_user)
 
     room, _ = chatroom.objects.get_or_create(room_name=room_name)
@@ -173,4 +173,6 @@ def chatPage(request, room_name):
     return render(request, 'client/chatPage.html', context)
 
 def user_messages(request):
-    return render(request, "client/message.html")
+    
+    chatrooms = request.user.chatrooms.all()
+    return render(request, "client/message.html", {"chatrooms": chatrooms})

@@ -13,6 +13,11 @@
                 {% csrf_token %}
                 <button type="submit">Logout</button>
             </form>
+            <form action="{% url 'home' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Home</button>
+              </form>
+            
 
             <div style="clear: both;"></div>
         {% endif %}
@@ -28,6 +33,7 @@
             <i class="fas fa-paper-plane"></i> Send
         </button>
     </div>
+    
 </div>
 
 <script>

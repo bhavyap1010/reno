@@ -2,7 +2,7 @@
 <ul>
 {% for room in chatrooms %}
     <li>
-        <a href="{% url 'chat-room' room.room_name %}">
+        <a href="{% url 'chat-page' room.room_name %}">
             {{ room.room_name }}
         </a>
     </li>
