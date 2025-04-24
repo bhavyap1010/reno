@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import Profile, businessProfile, serviceRequest, Review, chatroom
+from .models import Profile, businessProfile, serviceRequest, Review, chatroom, Messages
 from .forms import SignUpForm
 
 # Inline Profile inside User
@@ -66,3 +66,4 @@ admin.site.register(businessProfile, BusinessProfileAdmin)
 admin.site.register(serviceRequest, ServiceRequestAdmin)
 admin.site.register(Review)
 admin.site.register(chatroom, chatRoomAdmin)
+admin.site.register(Messages)

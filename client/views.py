@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm, BusinessProfileForm, servicerequestform, ReviewForm
 from .emailVerification import AccountActivationManager
-from .models import businessProfile, serviceRequest, chatroom
+from .models import businessProfile, serviceRequest, chatroom, Messages
 from django.contrib.auth.decorators import login_required
 
 
@@ -158,10 +158,15 @@ def chatPage(request, room_name):
     users = room_name.split('_')
     other_user = users[1] if users[0] == request.user.username else users[0]
 
+    room, _ = chatroom.objects.get_or_create(room_name=room_name)
+    messages = room.messages.select_related('sender').order_by('timestamp')
+
+
     context = {
         'room_name': room_name,
         'username': request.user.username,
-        'other_user': other_user 
+        'other_user': other_user,
+        'messages': messages
     }
     
     other_user = get_object_or_404(User, username=other_user)
