@@ -151,3 +151,17 @@ def business_detail(request, business_id):
         'business': business,
         'reviews': reviews
     })
+    
+@login_required
+def chatPage(request, room_name):
+
+    users = room_name.split('_')
+    other_user = users[1] if users[0] == request.user.username else users[0]
+
+    context = {
+        'room_name': room_name,
+        'username': request.user.username,
+        'other_user': other_user 
+    }
+    return render(request, 'client/chatPage.html', context)
+
