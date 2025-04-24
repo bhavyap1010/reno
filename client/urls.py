@@ -15,6 +15,8 @@ urlpatterns = [
     path('review/<int:business_id>/', views.write_review, name='write-review'),
     path('business/<int:business_id>/', views.business_detail, name='business-detail'),
     path("chat/<str:room_name>/", views.chatPage, name="chat-page"),
+    
+    path("messages/", views.user_messages, name="user-messages"),
 
 
 

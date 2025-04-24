@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import Profile, businessProfile, serviceRequest, Review
+from .models import Profile, businessProfile, serviceRequest, Review, chatroom
 from .forms import SignUpForm
 
 # Inline Profile inside User
@@ -55,9 +55,14 @@ class ServiceRequestAdmin(admin.ModelAdmin):
         return ", ".join(obj.services_needed)
     display_services.short_description = 'Services Needed'
 
+class chatRoomAdmin(admin.ModelAdmin):
+    list_display = ('room_name',)
+    filter_horizontal = ('participants',)
+
 # Re-register User and register all models
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(businessProfile, BusinessProfileAdmin)
 admin.site.register(serviceRequest, ServiceRequestAdmin)
 admin.site.register(Review)
+admin.site.register(chatroom, chatRoomAdmin)

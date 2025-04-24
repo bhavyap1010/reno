@@ -23,6 +23,10 @@
         <button type="submit">Request a Service</button>
     </form>
 
+    <form action="{% url 'user-messages' %}" method="get">
+        <button type="submit">View Messages</button>
+    </form>
+
     <h2>Businesses</h2>
     <ul>
         {% for business in businesses %}

@@ -30,7 +30,6 @@ class businessProfile(models.Model):
     def __str__(self):
         return self.name
 
-
 class serviceRequest(models.Model):
     service_choices = [
         ('cleaning', 'cleaning'),
@@ -50,7 +49,6 @@ class serviceRequest(models.Model):
     def __str__(self):
         return self.title
 
-
 class Review(models.Model):
     business = models.ForeignKey('businessProfile', on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -60,3 +58,7 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review by {self.user.username} for {self.business.name}"
+    
+class chatroom(models.Model):
+    room_name = models.CharField(max_length=100, unique=True)
+    participants = models.ManyToManyField(User, related_name="chatrooms")

@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm, BusinessProfileForm, servicerequestform, ReviewForm
 from .emailVerification import AccountActivationManager
-from .models import businessProfile, serviceRequest, Review
+from .models import businessProfile, serviceRequest, chatroom
 from django.contrib.auth.decorators import login_required
 
 
@@ -163,5 +163,8 @@ def chatPage(request, room_name):
         'username': request.user.username,
         'other_user': other_user 
     }
+        
     return render(request, 'client/chatPage.html', context)
 
+def user_messages(request):
+    return render(request, "client/message.html")

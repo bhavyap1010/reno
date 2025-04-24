@@ -1,0 +1,13 @@
+{% if chatrooms %}
+<ul>
+{% for room in chatrooms %}
+    <li>
+        <a href="{% url 'chat-room' room.room_name %}">
+            {{ room.room_name }}
+        </a>
+    </li>
+{% endfor %}
+</ul>
+{% else %}
+<p>you have no chat rooms yet.</p>
+{% endif %}
