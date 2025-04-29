@@ -1,0 +1,42 @@
+# Virtual environments
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django migrations (optional – only if you regenerate them per-developer)
+*/migrations/__pycache__/
+*/migrations/*.pyc
+*/migrations/*.pyo
+# Uncomment the next line if you want to ignore all migration files
+# */migrations/*.py
+
+# SQLite database
+db.sqlite3
+
+# Environment variables
+.env
+
+# macOS system files
+.DS_Store
+
+# VSCode
+.vscode/
+
+# Python egg info
+*.egg-info/
+
+# Logs
+*.log
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# Static and media (optional, if these are built dynamically)
+staticfiles/
+media/
