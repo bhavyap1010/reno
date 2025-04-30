@@ -55,6 +55,7 @@ def register(request):
 
     return render(request, 'client/signUp.html', {'form': form})
 
+#@login_required
 def verify(request):
 
     verification_code = request.session.get('verification_code')

@@ -1,18 +1,46 @@
-{% extends 'client/base.html' %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'client/root.css' %}">
+    <link rel="stylesheet" href="{% static 'client/auth.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+<body>
+    <h1 id="auth_title">Reno</h1>
+
 
 {% block content %}
     <div class="form_wrapper">
-        <h2>Verification Code</h2>
-        <form method="POST">
+        <div class="title_container">
+            <h2 class="form_title">Verify Your Account</h2>
+        </div>
+        <form method="POST" class="form_container">
             {% csrf_token %}
             <div class="input_field">
+                <span><i class="fa-solid fa-fingerprint"></i></span>
+
                 {{ form.code }}
                 {% if form.code.errors %}
                     <div class="error">{{ form.code.errors }}</div>
                 {% endif %}
             </div>
-            <button type="submit">Submit</button>
+            <div class="input_field">
+                <input type="submit" value="Submit" class="submit_button">
+            </div>
+            <div class="link_container">
+                <a href="{% url 'home' %}" class="register-button">Skip</a>
+            </div>
+    
         </form>
-        <a href="{% url 'home' %}">Go to Home</a>
     </div>
 {% endblock %}
+
+
+</body>
+</html>
