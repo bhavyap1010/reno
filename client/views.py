@@ -178,7 +178,6 @@ def chatPage(request, room_name):
     
     return render(request, 'client/chatPage.html', context)
 
-def user_messages(request):
-    
+def user_messages(request):  
     chatrooms = request.user.chatrooms.all()
     return render(request, "client/message.html", {"chatrooms": chatrooms})

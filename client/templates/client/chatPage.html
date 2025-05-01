@@ -1,5 +1,6 @@
 {% extends 'client/base.html' %}
 
+{% block content %}
 <div class="chat-container">
     <div class="chat-header">
         <h1>Chit-Chat <i class="fas fa-comment"></i></h1>
@@ -18,22 +19,20 @@
             <form action="{% url 'home' %}" method="post">
                 {% csrf_token %}
                 <button type="submit">Home</button>
-              </form>
-            
+            </form>
 
             <div style="clear: both;"></div>
         {% endif %}
     </div>
 
     <div class="chat__item__container" id="id_chat_item_container">
-      {% for message in messages %}
+        {% for message in messages %}
             <div class="chat-message">
                 <strong>{{ message.sender.username }}</strong>: {{ message.content }}
                 <div class="chat-time">{{ message.timestamp|date:"h:i" }}</div>
             </div>
         {% endfor %}
     </div>
-    
 
     <div class="chat-input-container">
         <input type="text" id="id_message_send_input" placeholder="Type your message..." />
@@ -41,7 +40,6 @@
             <i class="fas fa-paper-plane"></i> Send
         </button>
     </div>
-    
 </div>
 
 <script>
@@ -95,3 +93,4 @@
         messageContainer.scrollTop = messageContainer.scrollHeight;
     };
 </script>
+{% endblock %}
