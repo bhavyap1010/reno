@@ -68,10 +68,26 @@
    }
 
 
-   function startChat(otherUser ) {
+   function startChat(otherUser) {
        const currentUser  = "{{ request.user.username }}"; // Get the current user's username
        const roomName = getRoomName(currentUser , otherUser );
-       window.location.href = "/chat/" + roomName + "/"; // Redirect to the chat page
+       //window.location.href = "/chat/" + roomName + "/"; // Redirect to the chat page
+
+       fetch("{% url 'chat-start' %}", {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'x-csrftoken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ other_user: otherUser }) 
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            
+            window.location.href = "/chat/" + data.room_name + "/";
+        });
+
    }
 </script>
 {% endblock %}

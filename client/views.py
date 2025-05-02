@@ -153,31 +153,56 @@ def business_detail(request, business_id):
         'reviews': reviews
     })
 
+
+
+
+
+
+
+
+import json
+import secrets
+from django.http import JsonResponse as jsonresponse, HttpResponseBadRequest as httpresponsebadrequest
+
+
 @login_required
-def chatPage(request, room_name):
+def chatPage(request, room_name=None):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        
+        other_username = data.get('other_user')
+        other_user = get_object_or_404(User, username=other_username)
+        current_user = request.user
 
-    users = room_name.split('_')
-    other_user = users[1] if users[0] == request.user.username else users[0]
+        # check if a room already exists
+        existing_room = Chatroom.objects.filter(participants=current_user).filter(participants=other_user).first()
+        if existing_room:
+            room = existing_room
+        else:
+            room = Chatroom.objects.create(room_name=secrets.token_hex(8))
+            room.participants.add(current_user, other_user)
 
-    room, _ = Chatroom.objects.get_or_create(room_name=room_name)
-    messages = room.messages.select_related('sender').order_by('timestamp')
+        return jsonresponse({'room_name': room.room_name})
+    else:
+        if not room_name:
+            return httpresponsebadrequest("missing room name")
 
+        room = get_object_or_404(Chatroom, room_name=room_name)
+        participants = room.participants.exclude(id=request.user.id)
+        other_user = participants.first() if participants.exists() else None
+        messages = room.messages.select_related('sender').order_by('timestamp')
 
-    context = {
-        'room_name': room_name,
-        'username': request.user.username,
-        'other_user': other_user,
-        'messages': messages
-    }
+        context = {
+            'room_name': room.room_name,
+            'username': request.user.username,
+            'other_user': other_user.username if other_user else 'unknown',
+            'messages': messages
+        }
 
-    other_user = get_object_or_404(User, username=other_user)
+        return render(request, 'client/chatpage.html', context)
 
-    room, _ = Chatroom.objects.get_or_create(room_name=room_name)
-    room.participants.add(request.user)
-    room.participants.add(other_user)
-
-    return render(request, 'client/chatPage.html', context)
 
 def user_messages(request):
     Chatrooms = request.user.Chatrooms.all()
     return render(request, "client/message.html", {"Chatrooms": Chatrooms})
+
