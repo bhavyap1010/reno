@@ -44,15 +44,11 @@
 
 <script>
 
-    function getRoomName(user1, user2) {
-        return user1 < user2 ? user1 + "_" + user2 : user2 + "_" + user1;
-    }
-
     const currentUser  = "{{ username }}"; 
     const otherUser  = "{{ other_user }}"; 
 
-    const roomName = getRoomName(currentUser, otherUser);
-    const chatSocket = new WebSocket("ws://" + window.location.host + "/chat/" + roomName + "/");
+    const room_name = "{{ room_name }}";  // already passed by django context
+    const chatSocket = new WebSocket("ws://" + window.location.host + "/chat/" + room_name + "/");
 
     chatSocket.onopen = function (e) {
         console.log("The connection was set up successfully!");

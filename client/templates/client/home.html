@@ -1,94 +1,88 @@
 {% extends 'client/base.html' %}
 
 {% block content %}
-    <h1>Dashboard</h1>
+<h1>Dashboard</h1>
 
-    <form class="search" action="{% url 'home' %}" method="get">
-        <input type="text" name="q">
-        <button type="submit">Search</button>
-    </form>
+<form class="search" action="{% url 'home' %}" method="get">
+    <input type="text" name="q">
+    <button type="submit">Search</button>
+</form>
 
-    <form action="{% url 'logout-user' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Logout</button>
-    </form>
+<form action="{% url 'logout-user' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>
 
-    {% if user.profile.account_type == 'business' %}
-    <form action="{% url 'business-profile' %}" method="get">
-        <button type="submit">Create Business Listing</button>
-    </form>
-    {% endif %}
+{% if user.profile.account_type == 'business' %}
+<form action="{% url 'business-profile' %}" method="get">
+    <button type="submit">Create Business Listing</button>
+</form>
+{% endif %}
 
-    <form action="{% url 'request-service' %}" method="get">
-        <button type="submit">Request a Service</button>
-    </form>
+<form action="{% url 'request-service' %}" method="get">
+    <button type="submit">Request a Service</button>
+</form>
 
-    <form action="{% url 'user-messages' %}" method="get">
-        <button type="submit">View Messages</button>
-    </form>
+<form action="{% url 'user-messages' %}" method="get">
+    <button type="submit">View Messages</button>
+</form>
 
-    <h2>Businesses</h2>
-    <ul>
-        {% for business in businesses %}
-        <li>
-            <strong>
-                <a href="{% url 'business-detail' business.id %}">
-                    {{ business.name }}
-                </a>
-            </strong><br>
-            Services: {{ business.services }}<br>
-            Location: {{ business.service_location }}<br>
-            <a href="{% url 'write-review' business.id %}">Review</a>
-        </li>
-        {% empty %}
-        <li>No businesses available.</li>
-        {% endfor %}
-    </ul>
+<h2>Businesses</h2>
+<ul>
+    {% for business in businesses %}
+    <li>
+        <strong>
+            <a href="{% url 'business-detail' business.id %}">
+                {{ business.name }}
+            </a>
+        </strong><br>
+        Services: {{ business.services }}<br>
+        Location: {{ business.service_location }}<br>
+        <a href="{% url 'write-review' business.id %}">Review</a>
+    </li>
+    {% empty %}
+    <li>No businesses available.</li>
+    {% endfor %}
+</ul>
 
-    <h2>Service Requests</h2>
-    <ul>
-        {% for request in service_requests %}
-        <li>
-            <strong>{{ request.title }}</strong><br>
-            Needed Services: {{ request.services_needed }}<br>
-            Location: {{ request.location }}<br>
-            Description: {{ request.description }} <br>
-            Created By: {{ request.user.username }} <br>
-            <a href="javascript:void(0);" onclick="startChat('{{ request.user.username }}')">Start Chat</a>
- 
-        </li>
-        {% empty %}
-        <li>No service requests found.</li>
-        {% endfor %}
-    </ul>
+<h2>Service Requests</h2>
+<ul>
+    {% for request in service_requests %}
+    <li>
+        <strong>{{ request.title }}</strong><br>
+        Needed Services: {{ request.services_needed }}<br>
+        Location: {{ request.location }}<br>
+        Description: {{ request.description }} <br>
+        Created By: {{ request.user.username }} <br>
+        <a href="javascript:void(0);" onclick="startChat('{{ request.user.username }}')">Start Chat</a>
+
+    </li>
+    {% empty %}
+    <li>No service requests found.</li>
+    {% endfor %}
+</ul>
 
 <script>
-       function getRoomName(user1, user2) {
-       return user1 < user2 ? user1 + "_" + user2 : user2 + "_" + user1;
-   }
 
+    function startChat(otherUser) {
+        const currentUser = "{{ request.user.username }}"; // Get the current user's username
 
-   function startChat(otherUser) {
-       const currentUser  = "{{ request.user.username }}"; // Get the current user's username
-       const roomName = getRoomName(currentUser , otherUser );
-       //window.location.href = "/chat/" + roomName + "/"; // Redirect to the chat page
-
-       fetch("{% url 'chat-start' %}", {
+        fetch("{% url 'chat-start' %}", {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
                 'x-csrftoken': '{{ csrf_token }}'
             },
-            body: JSON.stringify({ other_user: otherUser }) 
+            body: JSON.stringify({ other_user: otherUser })
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            
-            window.location.href = "/chat/" + data.room_name + "/";
-        });
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
 
-   }
+                window.location.href = "/chat/" + data.room_name + "/";
+            });
+
+
+    }
 </script>
 {% endblock %}
-
