@@ -1,9 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Profile, businessProfile, serviceRequest
-from .models import Review
-
+from .models import Profile, BusinessProfile, ServiceRequest, Review
 
 class SignUpForm(forms.ModelForm):
     email = forms.EmailField(
@@ -69,15 +67,26 @@ class CustomAuthenticationForm(AuthenticationForm):
 class VerificationCodeForm(forms.Form):
     code = forms.CharField(label='Code', max_length=6, widget=forms.TextInput(attrs={'placeholder': 'Enter verification code'}))
 
-class BusinessProfileForm(forms.ModelForm):
+class BusinessForm(forms.ModelForm):
     class Meta:
-        model = businessProfile
+        model = BusinessProfile
         fields = ['name', 'services', 'service_location']
+        widgets = {
+            'services': forms.CheckboxSelectMultiple(),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Business Name'}),
+            'service_location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Location'}),
+        }
 
-class servicerequestform(forms.ModelForm):
+class ServiceRequestForm(forms.ModelForm):
     class Meta:
-        model = serviceRequest
+        model = ServiceRequest
         fields = ['title', 'services_needed', 'location', 'description']
+        widgets = {
+            'services_needed': forms.CheckboxSelectMultiple(),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Service Title'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Location'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe your request'}),
+        }
 
 class ReviewForm(forms.ModelForm):
     class Meta:

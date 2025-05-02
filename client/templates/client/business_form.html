@@ -1,15 +1,46 @@
-{% extends 'client/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Business Profile</title>
+  <link rel="stylesheet" href="{% static 'client/root.css' %}">
+  <link rel="stylesheet" href="{% static 'client/auth.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <h1 id="auth_title">Reno</h1>
+  <div class="form_wrapper">
+    <div class="title_container">
+      <h2>Business Profile</h2>
+    </div>
 
-{% block content %}
-  <h2>Business Profile</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-  </form>
+    <form method="post">
+      {% csrf_token %}
 
-  <form action="{% url 'home' %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Home</button>
-  </form>
-{% endblock %}
+      <div class="input_field">
+        <span><i class="fas fa-briefcase"></i></span>
+        {{ form.name }}
+      </div>
+
+      <div class="bubble-group">
+        {% for checkbox in form.services %}
+          {{ checkbox.tag }}
+          <label for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+        {% endfor %}
+      </div>
+
+      <div class="input_field">
+        <span><i class="fas fa-location-dot"></i></span>
+        {{ form.service_location }}
+      </div>
+
+      <input type="submit" value="Save">
+    </form>
+    <div class="link_container" style="text-align:center; margin-top:10px;">
+      <a href="{% url 'home' %}" class="register-button">Return Home</a>
+    </div>
+  </div>
+</body>
+</html>

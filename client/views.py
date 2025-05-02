@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm, BusinessProfileForm, servicerequestform, ReviewForm
+from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm, BusinessForm, ServiceRequestForm, ReviewForm
 from .emailVerification import AccountActivationManager
-from .models import businessProfile, serviceRequest, chatroom, Messages
+from .models import BusinessProfile, ServiceRequest, Chatroom, Message
 from django.contrib.auth.decorators import login_required
 
 
@@ -13,12 +13,12 @@ def home(request):
 
     query = request.GET.get('q')  # Get the search term from the query string
 
-    businesses = businessProfile.objects.all()
+    businesses = BusinessProfile.objects.all()
 
     if query:
-        service_requests = serviceRequest.objects.filter(title__icontains=query)
+        service_requests = ServiceRequest.objects.filter(title__icontains=query)
     else:
-        service_requests = serviceRequest.objects.all()
+        service_requests = ServiceRequest.objects.all()
 
     context = {
         'businesses': businesses,
@@ -103,34 +103,34 @@ def signIn(request):
 
 @login_required
 def create_or_edit_business_profile(request):
-    profile, created = businessProfile.objects.get_or_create(user=request.user)
+    profile, created = BusinessProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
-        form = BusinessProfileForm(request.POST, instance=profile)
+        form = BusinessForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
             return redirect('home')
     else:
-        form = BusinessProfileForm(instance=profile)
+        form = BusinessForm(instance=profile)
 
     return render(request, 'client/business_form.html', {'form': form})
 
 @login_required
 def create_service_request(request):
     if request.method == 'POST':
-        form = servicerequestform(request.POST)
+        form = ServiceRequestForm(request.POST)
         if form.is_valid():
             service_request = form.save(commit=False)
             service_request.user = request.user
             service_request.save()
             return redirect('home')
     else:
-        form = servicerequestform()
+        form = ServiceRequestForm()
     return render(request, 'client/service_request_form.html', {'form': form})
 
 @login_required
 def write_review(request, business_id):
-    business = get_object_or_404(businessProfile, id=business_id)
+    business = get_object_or_404(BusinessProfile, id=business_id)
 
     if request.method == 'POST':
         form = ReviewForm(request.POST)
@@ -146,20 +146,20 @@ def write_review(request, business_id):
     return render(request, 'client/write_review.html', {'form': form, 'business': business})
 
 def business_detail(request, business_id):
-    business = get_object_or_404(businessProfile, id=business_id)
+    business = get_object_or_404(BusinessProfile, id=business_id)
     reviews = business.reviews.all()  # reverse relationship via related_name='reviews'
     return render(request, 'client/business_detail.html', {
         'business': business,
         'reviews': reviews
     })
-    
+
 @login_required
 def chatPage(request, room_name):
 
     users = room_name.split('_')
     other_user = users[1] if users[0] == request.user.username else users[0]
 
-    room, _ = chatroom.objects.get_or_create(room_name=room_name)
+    room, _ = Chatroom.objects.get_or_create(room_name=room_name)
     messages = room.messages.select_related('sender').order_by('timestamp')
 
 
@@ -169,15 +169,15 @@ def chatPage(request, room_name):
         'other_user': other_user,
         'messages': messages
     }
-    
+
     other_user = get_object_or_404(User, username=other_user)
 
-    room, _ = chatroom.objects.get_or_create(room_name=room_name)
+    room, _ = Chatroom.objects.get_or_create(room_name=room_name)
     room.participants.add(request.user)
     room.participants.add(other_user)
-    
+
     return render(request, 'client/chatPage.html', context)
 
-def user_messages(request):  
-    chatrooms = request.user.chatrooms.all()
-    return render(request, "client/message.html", {"chatrooms": chatrooms})
+def user_messages(request):
+    Chatrooms = request.user.Chatrooms.all()
+    return render(request, "client/message.html", {"Chatrooms": Chatrooms})

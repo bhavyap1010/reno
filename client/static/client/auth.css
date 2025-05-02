@@ -178,6 +178,22 @@
     border-left: 1px solid #cccccc;
 }
 
+.form_wrapper .form-control {
+    width: 100%;
+    padding: 8px 10px 9px 35px;
+    height: 35px;
+    border: 1px solid #cccccc;
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.form_wrapper .form-control:focus {
+    box-shadow: 0 0 2px 1px rgba(255, 169, 0, 0.5);
+    border: 1px solid var(--blue);
+    background: #fafafa;
+}
+
 .checkbox_option label {
     margin-right: 1em;
     position: relative;
@@ -317,6 +333,34 @@
 
 .credit a {
     color: var(--darkBlue);
+}
+
+.bubble-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0 20px;
+}
+
+.bubble-group input[type="checkbox"] {
+    display: none;
+}
+
+.bubble-group label {
+    padding: 10px 16px;
+    border-radius: 20px;
+    background: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.bubble-group input[type="checkbox"]:checked + label {
+    background-color: var(--blue);
+    color: white;
+    border-color: var(--blue);
 }
 
 @-webkit-keyframes check {

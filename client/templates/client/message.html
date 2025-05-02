@@ -1,8 +1,8 @@
 <!-- THIS PAGE IS TO VIEW THE INBOX OF MESSAGES THEY HAVE HAD WITH OTHER PEOPLE-->
 
-{% if chatrooms %}
+{% if Chatrooms %}
 <ul>
-{% for room in chatrooms %}
+{% for room in Chatrooms %}
     <li>
         <a href="{% url 'chat-page' room.room_name %}">
             {{ room.room_name }}

@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 
-from .models import chatroom, Messages
+from .models import Chatroom, Message
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -26,22 +26,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
-        
+
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
         username = text_data_json["username"]
         time = text_data_json["time"]
-            
+
         # saving messages --> https://github.com/legionscript/Django-Channels-Chat/blob/tutorial5/chatrooms/consumers.py
 
         # Finding room
-        room = await database_sync_to_async(chatroom.objects.get)(room_name=self.room_name)
-        chat = Messages( content=message, sender=self.scope['user'],room=room)
-        
+        room = await database_sync_to_async(Chatroom.objects.get)(room_name=self.room_name)
+        chat = Message( content=message, sender=self.scope['user'],room=room)
+
         await database_sync_to_async(chat.save)()
 
         # Send message to room group
-        
+
         await self.channel_layer.group_send(
             self.room_group_name, {
                 "type": "sendMessage",
