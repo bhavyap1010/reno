@@ -199,20 +199,7 @@ def chatPage(request, room_name=None):
         return render(request, 'client/chatpage.html', context)
 
 def user_messages(request):
-    Chatrooms = request.user.Chatrooms.all()
-    
-    rooms_with_users = []
-    for room in Chatrooms:
-        other_user = room.participants.exclude(id=request.user.id).first()
-        rooms_with_users.append((room, other_user))
-        
-    print(rooms_with_users)
-    print(Chatrooms)
-
-    return render(request, "client/message.html", {"Chatrooms": Chatrooms})
-
-def user_messages(request):
-    Chatrooms = request.user.Chatrooms.all()  # Lowercase 'chatrooms'
+    Chatrooms = request.user.Chatrooms.all()  
 
     rooms_with_users = []
     for room in Chatrooms:
