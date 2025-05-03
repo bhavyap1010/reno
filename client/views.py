@@ -7,7 +7,7 @@ from .models import BusinessProfile, ServiceRequest, Chatroom, Message
 from django.contrib.auth.decorators import login_required
 import json
 import secrets
-from django.http import JsonResponse as jsonresponse, HttpResponseBadRequest as httpresponsebadrequest
+from django.http import JsonResponse as jsonresponse, HttpResponseBadRequest as httpresponsebadrequest, HttpResponseForbidden
 
 
 def home(request):
@@ -179,8 +179,14 @@ def chatPage(request, room_name=None):
             return httpresponsebadrequest("missing room name")
 
         room = get_object_or_404(Chatroom, room_name=room_name)
+
+        if not room.participants.filter(id=request.user.id).exists():
+            return HttpResponseForbidden("you are not authorized to access this chat.")
+
+        # get the other participant
         participants = room.participants.exclude(id=request.user.id)
         other_user = participants.first() if participants.exists() else None
+
         messages = room.messages.select_related('sender').order_by('timestamp')
 
         context = {
@@ -191,7 +197,6 @@ def chatPage(request, room_name=None):
         }
 
         return render(request, 'client/chatpage.html', context)
-
 
 def user_messages(request):
     Chatrooms = request.user.Chatrooms.all()
