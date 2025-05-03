@@ -5,6 +5,9 @@ from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm, B
 from .emailVerification import AccountActivationManager
 from .models import BusinessProfile, ServiceRequest, Chatroom, Message
 from django.contrib.auth.decorators import login_required
+import json
+import secrets
+from django.http import JsonResponse as jsonresponse, HttpResponseBadRequest as httpresponsebadrequest
 
 
 def home(request):
@@ -153,18 +156,6 @@ def business_detail(request, business_id):
         'reviews': reviews
     })
 
-
-
-
-
-
-
-
-import json
-import secrets
-from django.http import JsonResponse as jsonresponse, HttpResponseBadRequest as httpresponsebadrequest
-
-
 @login_required
 def chatPage(request, room_name=None):
     if request.method == 'POST':
@@ -204,5 +195,24 @@ def chatPage(request, room_name=None):
 
 def user_messages(request):
     Chatrooms = request.user.Chatrooms.all()
+    
+    rooms_with_users = []
+    for room in Chatrooms:
+        other_user = room.participants.exclude(id=request.user.id).first()
+        rooms_with_users.append((room, other_user))
+        
+    print(rooms_with_users)
+    print(Chatrooms)
+
     return render(request, "client/message.html", {"Chatrooms": Chatrooms})
 
+def user_messages(request):
+    Chatrooms = request.user.Chatrooms.all()  # Lowercase 'chatrooms'
+
+    rooms_with_users = []
+    for room in Chatrooms:
+        other_user = room.participants.exclude(id=request.user.id).first()
+        if other_user and room.room_name:  # Avoid empty names or missing users
+            rooms_with_users.append((room, other_user))
+
+    return render(request, "client/message.html", {"rooms_with_users": rooms_with_users})
