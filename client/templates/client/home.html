@@ -54,8 +54,9 @@
         Location: {{ request.location }}<br>
         Description: {{ request.description }} <br>
         Created By: {{ request.user.username }} <br>
+        {% if request.user != user %}
         <a href="javascript:void(0);" onclick="startChat('{{ request.user.username }}')">Start Chat</a>
-
+        {% endif %}
     </li>
     {% empty %}
     <li>No service requests found.</li>

@@ -58,7 +58,7 @@ def register(request):
 
     return render(request, 'client/signUp.html', {'form': form})
 
-#@login_required
+@login_required
 def verify(request):
 
     verification_code = request.session.get('verification_code')
@@ -164,6 +164,10 @@ def chatPage(request, room_name=None):
         other_username = data.get('other_user')
         other_user = get_object_or_404(User, username=other_username)
         current_user = request.user
+
+        # Prevent chatting with self
+        if other_user == current_user:
+            return httpresponsebadrequest("Cannot start a chat with yourself.")
 
         # check if a room already exists
         existing_room = Chatroom.objects.filter(participants=current_user).filter(participants=other_user).first()
