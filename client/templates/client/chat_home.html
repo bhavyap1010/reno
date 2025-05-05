@@ -21,6 +21,29 @@
         overflow-y: auto;
         margin-bottom: 10px;
     }
+    .chat-message {
+        display: flex;
+        margin-bottom: 10px;
+    }
+    .chat-message .chat-time {
+        font-size: 0.8rem;
+        color: #888;
+        margin-left: 10px;
+    }
+    .chat-message.self {
+        justify-content: flex-end;
+        text-align: right;
+    }
+    .chat-message.self strong {
+        margin-left: 10px;
+    }
+    .chat-message.other {
+        justify-content: flex-start;
+        text-align: left;
+    }
+    .chat-message.other strong {
+        margin-right: 10px;
+    }
 </style>
 
 <div class="chat-layout">
@@ -38,12 +61,15 @@
     <!-- Chat Panel -->
     <div class="chat-main">
         {% if room_name %}
-            <h2>Chit-Chat with {{ other_user|title }}</h2> <!-- Updated header -->
+            <h2>{{ other_user|title }}</h2> <!-- Updated header -->
             <div class="chat__item__container" id="id_chat_item_container">
                 {% for message in messages %}
-                    <div class="chat-message">
-                        <strong>{{ message.sender.username }}</strong>: {{ message.content }}
-                        <div class="chat-time">{{ message.timestamp|date:"h:i" }}</div>
+                    <div class="chat-message {% if message.sender.username == request.user.username %}self{% else %}other{% endif %}">
+                        {% if message.sender.username != request.user.username %}
+                            <strong>{{ message.sender.username }}</strong>: {{ message.content }}
+                        {% else %}
+                            {{ message.content }} <strong>{{ message.sender.username }}</strong>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
@@ -80,9 +106,10 @@
                     const data = JSON.parse(e.data);
                     const container = document.querySelector("#id_chat_item_container");
                     const div = document.createElement("div");
-                    div.className = "chat-message";
-                    div.innerHTML = `<strong>${data.username}</strong>: ${data.message}
-                                     <div class="chat-time">${data.time}</div>`;
+                    div.className = `chat-message ${data.username === "{{ request.user.username }}" ? "self" : "other"}`;
+                    div.innerHTML = data.username === "{{ request.user.username }}"
+                        ? `${data.message} <strong>${data.username}</strong>`
+                        : `<strong>${data.username}</strong>: ${data.message}`;
                     container.appendChild(div);
                     container.scrollTop = container.scrollHeight;
                     document.querySelector("#id_message_send_input").value = "";
