@@ -13,12 +13,7 @@ urlpatterns = [
     path('business-profile/', views.create_or_edit_business_profile, name='business-profile'),
     path('request-service/', views.create_service_request, name='request-service'),
     path('review/<int:business_id>/', views.write_review, name='write-review'),
-    path('business/<int:business_id>/', views.business_detail, name='business-detail'),
-    
-    #path("chat/<str:room_name>/", views.chatPage, name="chat-page"),
-    #path("chat/", views.chatPage, name="chat-start"),  # for post requests
-    #path("messages/", views.user_messages, name="user-messages"),
-    
+    path('business/<int:business_id>/', views.business_detail, name='business-detail'),    
     path("chats/", views.chat_home, name="chat-home"),
     path("chats/<str:room_name>/", views.chat_home, name="chat-home"),
     path("start-chat/", views.start_chat, name="chat-start"),  # assuming this view exists
