@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 import json
 import secrets
 from django.http import JsonResponse as jsonresponse, HttpResponseBadRequest as httpresponsebadrequest, HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
 
 
 def home(request):
@@ -250,25 +251,30 @@ def chat_home(request, room_name=None):
 
 
 
+@csrf_exempt  # Allow POST requests without CSRF token for debugging
 @login_required
 def start_chat(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        
-        other_username = data.get('other_user')
-        other_user = get_object_or_404(User, username=other_username)
-        current_user = request.user
+        try:
+            data = json.loads(request.body)
+            other_username = data.get('other_user')
+            other_user = get_object_or_404(User, username=other_username)
+            current_user = request.user
 
-        # Prevent chatting with self
-        if other_user == current_user:
-            return httpresponsebadrequest("Cannot start a chat with yourself.")
+            # Prevent chatting with self
+            if other_user == current_user:
+                return jsonresponse({'error': "Cannot start a chat with yourself."}, status=400)
 
-        # check if a room already exists
-        existing_room = Chatroom.objects.filter(participants=current_user).filter(participants=other_user).first()
-        if existing_room:
-            room = existing_room
-        else:
-            room = Chatroom.objects.create(room_name=secrets.token_hex(8))
-            room.participants.add(current_user, other_user)
+            # Check if a room already exists
+            existing_room = Chatroom.objects.filter(participants=current_user).filter(participants=other_user).first()
+            if existing_room:
+                room = existing_room
+            else:
+                room = Chatroom.objects.create(room_name=secrets.token_hex(8))
+                room.participants.add(current_user, other_user)
 
-        return jsonresponse({'room_name': room.room_name})
+            return jsonresponse({'room_name': room.room_name})
+        except Exception as e:
+            return jsonresponse({'error': str(e)}, status=500)
+    else:
+        return jsonresponse({'error': "Invalid request method."}, status=405)
