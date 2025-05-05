@@ -212,3 +212,63 @@ def user_messages(request):
             rooms_with_users.append((room, other_user))
 
     return render(request, "client/message.html", {"rooms_with_users": rooms_with_users})
+
+@login_required
+def chat_home(request, room_name=None):
+    Chatrooms = request.user.Chatrooms.all()  
+
+    # build the sidebar list
+    rooms_with_users = []
+    for room in Chatrooms:
+        other_user = room.participants.exclude(id=request.user.id).first()
+        if other_user and room.room_name:
+            rooms_with_users.append((room, other_user))
+
+    # load the current room and messages (if selected)
+    messages = []
+    other_user = None
+    selected_room = None
+
+    if room_name:
+        selected_room = get_object_or_404(Chatrooms, room_name=room_name)
+
+        if not selected_room.participants.filter(id=request.user.id).exists():
+            return HttpResponseForbidden("you are not authorized to access this chat.")
+
+        messages = selected_room.messages.select_related('sender').order_by('timestamp')
+        other_user = selected_room.participants.exclude(id=request.user.id).first()
+
+    context = {
+        'rooms_with_users': rooms_with_users,
+        'room_name': selected_room.room_name if selected_room else '',
+        'messages': messages,
+        'username': request.user.username,
+        'other_user': other_user.username if other_user else '',
+    }
+
+    return render(request, 'client/chat_home.html', context)
+
+
+
+@login_required
+def start_chat(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        
+        other_username = data.get('other_user')
+        other_user = get_object_or_404(User, username=other_username)
+        current_user = request.user
+
+        # Prevent chatting with self
+        if other_user == current_user:
+            return httpresponsebadrequest("Cannot start a chat with yourself.")
+
+        # check if a room already exists
+        existing_room = Chatroom.objects.filter(participants=current_user).filter(participants=other_user).first()
+        if existing_room:
+            room = existing_room
+        else:
+            room = Chatroom.objects.create(room_name=secrets.token_hex(8))
+            room.participants.add(current_user, other_user)
+
+        return jsonresponse({'room_name': room.room_name})

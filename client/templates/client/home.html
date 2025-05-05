@@ -23,7 +23,7 @@
     <button type="submit">Request a Service</button>
 </form>
 
-<form action="{% url 'user-messages' %}" method="get">
+<form action="{% url 'chat-home' %}" method="get">
     <button type="submit">View Messages</button>
 </form>
 
@@ -68,7 +68,7 @@
     function startChat(otherUser) {
         const currentUser = "{{ request.user.username }}"; // Get the current user's username
 
-        fetch("{% url 'chat-start' %}", {
+        fetch("{% url 'chat-home' %}", {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
@@ -82,7 +82,6 @@
 
                 window.location.href = "/chat/" + data.room_name + "/";
             });
-
 
     }
 </script>

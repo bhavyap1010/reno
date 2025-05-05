@@ -1,0 +1,95 @@
+{% extends 'client/base.html' %}
+{% block content %}
+<style>
+    .chat-layout { display: flex; }
+    .chat-sidebar {
+        width: 25%;
+        border-right: 1px solid #ccc;
+        padding: 1rem;
+        height: 90vh;
+        overflow-y: auto;
+    }
+    .chat-main {
+        width: 75%;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        height: 90vh;
+    }
+    .chat__item__container {
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="chat-layout">
+    <!-- Sidebar -->
+    <div class="chat-sidebar">
+        <h3>Your Conversations</h3>
+        <ul>
+            {% for room, other_user in rooms_with_users %}
+                <li><a href="{% url 'chat-home' room.room_name %}">{{ other_user.username|title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Chat Panel -->
+    <div class="chat-main">
+        {% if room_name %}
+            <h2>Chat with {{ other_user|title }}</h2>
+            <div class="chat__item__container" id="id_chat_item_container">
+                {% for message in messages %}
+                    <div class="chat-message">
+                        <strong>{{ message.sender.username }}</strong>: {{ message.content }}
+                        <div class="chat-time">{{ message.timestamp|date:"h:i" }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+                <button type="submit" id="id_message_send_button">Send</button>
+            </div>
+
+            <script>
+                const roomName = "{{ room_name }}";
+                const chatSocket = new WebSocket("ws://" + window.location.host + "/chat/" + roomName + "/");
+
+                chatSocket.onopen = () => console.log("Connected to WebSocket");
+                chatSocket.onclose = () => console.log("Disconnected");
+
+                document.querySelector("#id_message_send_input").focus();
+                document.querySelector("#id_message_send_input").onkeyup = function (e) {
+                    if (e.keyCode == 13) document.querySelector("#id_message_send_button").click();
+                };
+
+                document.querySelector("#id_message_send_button").onclick = function () {
+                    const messageInput = document.querySelector("#id_message_send_input");
+                    const message = messageInput.value;
+                    const currentTime = new Date().toLocaleTimeString();
+
+                    chatSocket.send(JSON.stringify({
+                        message: message,
+                        username: "{{ request.user.username }}",
+                        time: currentTime
+                    }));
+                };
+
+                chatSocket.onmessage = function (e) {
+                    const data = JSON.parse(e.data);
+                    const container = document.querySelector("#id_chat_item_container");
+                    const div = document.createElement("div");
+                    div.className = "chat-message";
+                    div.innerHTML = `<strong>${data.username}</strong>: ${data.message}
+                                     <div class="chat-time">${data.time}</div>`;
+                    container.appendChild(div);
+                    container.scrollTop = container.scrollHeight;
+                    document.querySelector("#id_message_send_input").value = "";
+                };
+            </script>
+        {% else %}
+            <p>Select a chat to start messaging.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

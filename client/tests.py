@@ -83,17 +83,9 @@ class ClientAppTests(TestCase):
         self.client.login(username="user1", password="password1")
         chatroom = Chatroom.objects.create(room_name="testroom")
         chatroom.participants.add(self.user1, self.user2)
-        response = self.client.get(reverse("chat-page", args=["testroom"]))
+        response = self.client.get(reverse("chat-home", args=["testroom"]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Chit-Chat")
-
-    def test_user_messages_view(self):
-        self.client.login(username="user1", password="password1")
-        chatroom = Chatroom.objects.create(room_name="testroom")
-        chatroom.participants.add(self.user1, self.user2)
-        response = self.client.get(reverse("user-messages"))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("user2", response.content.decode().lower())  # Case-insensitive check
 
     def test_prevent_chat_with_self(self):
         self.client.login(username="user1", password="password1")
