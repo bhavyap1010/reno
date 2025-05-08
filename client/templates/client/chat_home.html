@@ -1,125 +1,96 @@
-{% extends 'client/base.html' %}
 {% block content %}
-<style>
-    .chat-layout { display: flex; }
-    .chat-sidebar {
-        width: 25%;
-        border-right: 1px solid #ccc;
-        padding: 1rem;
-        height: 90vh;
-        overflow-y: auto;
-    }
-    .chat-main {
-        width: 75%;
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        height: 90vh;
-    }
-    .chat__item__container {
-        flex-grow: 1;
-        overflow-y: auto;
-        margin-bottom: 10px;
-    }
-    .chat-message {
-        display: flex;
-        margin-bottom: 10px;
-    }
-    .chat-message .chat-time {
-        font-size: 0.8rem;
-        color: #888;
-        margin-left: 10px;
-    }
-    .chat-message.self {
-        justify-content: flex-end;
-        text-align: right;
-    }
-    .chat-message.self strong {
-        margin-left: 10px;
-    }
-    .chat-message.other {
-        justify-content: flex-start;
-        text-align: left;
-    }
-    .chat-message.other strong {
-        margin-right: 10px;
-    }
-</style>
+{% load static %}
 
-<div class="chat-layout">
-    <a href="{% url 'home' %}" class="register-button">Home</a>
-    <!-- Sidebar -->
-    <div class="chat-sidebar">
-        <h3>Your Conversations</h3>
-        <ul>
-            {% for room, other_user in rooms_with_users %}
-                <li><a href="{% url 'chat-home' room.room_name %}">{{ other_user.username|title }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    <!-- Chat Panel -->
-    <div class="chat-main">
-        {% if room_name %}
-            <h2>{{ other_user|title }}</h2> <!-- Updated header -->
-            <div class="chat__item__container" id="id_chat_item_container">
-                {% for message in messages %}
-                    <div class="chat-message {% if message.sender.username == request.user.username %}self{% else %}other{% endif %}">
-                        {% if message.sender.username != request.user.username %}
-                            <strong>{{ message.sender.username }}</strong>: {{ message.content }}
-                        {% else %}
-                            {{ message.content }} <strong>{{ message.sender.username }}</strong>
-                        {% endif %}
-                    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'client/chat.css' %}">
+</head>
+<body>
+    <div class="chat-layout">
+        <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+        <!-- Sidebar -->
+        <div class="chat-sidebar" id="chatSidebar">
+            <h3>Your Conversations</h3>
+            <ul>
+                {% for room, other_user in rooms_with_users %}
+                    <li><a href="{% url 'chat-home' room.room_name %}">{{ other_user.username|title }}</a></li>
                 {% endfor %}
-            </div>
-            <div class="chat-input-container">
-                <input type="text" id="id_message_send_input" placeholder="Type your message..." />
-                <button type="submit" id="id_message_send_button">Send</button>
-            </div>
+            </ul>
+        </div>
+    
+        <!-- Chat Panel -->
+        <div class="chat-main">
+            {% if room_name %}
+                <h2>{{ other_user|title }}</h2> <!-- Updated header -->
+                <div class="chat__item__container" id="id_chat_item_container">
+                    {% for message in messages %}
+                        <div class="chat-message {% if message.sender.username == request.user.username %}self{% else %}other{% endif %}">
+                            {% if message.sender.username != request.user.username %}
+                                <strong>{{ message.sender.username }}</strong>: {{ message.content }}
+                            {% else %}
+                                {{ message.content }} <strong>{{ message.sender.username }}</strong>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+                    <button type="submit" id="id_message_send_button">Send</button>
+                </div>
+    
+                <script>
+                    const roomName = "{{ room_name }}";
+                    const chatSocket = new WebSocket("ws://" + window.location.host + "/chat/" + roomName + "/");
+    
+                    chatSocket.onopen = () => console.log("Connected to WebSocket");
+                    chatSocket.onclose = () => console.log("Disconnected");
+    
+                    document.querySelector("#id_message_send_input").focus();
+                    document.querySelector("#id_message_send_input").onkeyup = function (e) {
+                        if (e.keyCode == 13) document.querySelector("#id_message_send_button").click();
+                    };
+    
+                    document.querySelector("#id_message_send_button").onclick = function () {
+                        const messageInput = document.querySelector("#id_message_send_input");
+                        const message = messageInput.value;
+                        const currentTime = new Date().toLocaleTimeString();
+    
+                        chatSocket.send(JSON.stringify({
+                            message: message,
+                            username: "{{ request.user.username }}",
+                            time: currentTime
+                        }));
+                    };
+    
+                    chatSocket.onmessage = function (e) {
+                        const data = JSON.parse(e.data);
+                        const container = document.querySelector("#id_chat_item_container");
+                        const div = document.createElement("div");
+                        div.className = `chat-message ${data.username === "{{ request.user.username }}" ? "self" : "other"}`;
+                        div.innerHTML = data.username === "{{ request.user.username }}"
+                            ? `${data.message} <strong>${data.username}</strong>`
+                            : `<strong>${data.username}</strong>: ${data.message}`;
+                        container.appendChild(div);
+                        container.scrollTop = container.scrollHeight;
+                        document.querySelector("#id_message_send_input").value = "";
+                    };
 
-            <script>
-                const roomName = "{{ room_name }}";
-                const chatSocket = new WebSocket("ws://" + window.location.host + "/chat/" + roomName + "/");
+                    const sidebarToggle = document.getElementById("sidebarToggle");
+                    const chatSidebar = document.getElementById("chatSidebar");
 
-                chatSocket.onopen = () => console.log("Connected to WebSocket");
-                chatSocket.onclose = () => console.log("Disconnected");
-
-                document.querySelector("#id_message_send_input").focus();
-                document.querySelector("#id_message_send_input").onkeyup = function (e) {
-                    if (e.keyCode == 13) document.querySelector("#id_message_send_button").click();
-                };
-
-                document.querySelector("#id_message_send_button").onclick = function () {
-                    const messageInput = document.querySelector("#id_message_send_input");
-                    const message = messageInput.value;
-                    const currentTime = new Date().toLocaleTimeString();
-
-                    chatSocket.send(JSON.stringify({
-                        message: message,
-                        username: "{{ request.user.username }}",
-                        time: currentTime
-                    }));
-                };
-
-                chatSocket.onmessage = function (e) {
-                    const data = JSON.parse(e.data);
-                    const container = document.querySelector("#id_chat_item_container");
-                    const div = document.createElement("div");
-                    div.className = `chat-message ${data.username === "{{ request.user.username }}" ? "self" : "other"}`;
-                    div.innerHTML = data.username === "{{ request.user.username }}"
-                        ? `${data.message} <strong>${data.username}</strong>`
-                        : `<strong>${data.username}</strong>: ${data.message}`;
-                    container.appendChild(div);
-                    container.scrollTop = container.scrollHeight;
-                    document.querySelector("#id_message_send_input").value = "";
-                };
-            </script>
-        {% else %}
-            <p>Select a chat to start messaging.</p>
-        {% endif %}
+                    sidebarToggle.addEventListener("click", () => {
+                        chatSidebar.classList.toggle("active");
+                    });
+                </script>
+            {% else %}
+                <p>Select a chat to start messaging.</p>
+            {% endif %}
+        </div>
     </div>
-
-
-</div>
+</body>
+</html>
 {% endblock %}
