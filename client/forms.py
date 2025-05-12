@@ -72,10 +72,16 @@ class BusinessForm(forms.ModelForm):
         model = BusinessProfile
         fields = ['name', 'services', 'service_location']
         widgets = {
-            'services': forms.CheckboxSelectMultiple(),
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Business Name'}),
+            'services': forms.CheckboxSelectMultiple(),
             'service_location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Location'}),
         }
+
+    def clean_services(self):
+        services = self.cleaned_data.get('services')
+        if not services:
+            raise forms.ValidationError("Please select at least one service.")
+        return services
 
 class ServiceRequestForm(forms.ModelForm):
     class Meta:
@@ -87,6 +93,12 @@ class ServiceRequestForm(forms.ModelForm):
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Location'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe your request'}),
         }
+
+    def clean_services_needed(self):
+        services = self.cleaned_data.get('services_needed')
+        if not services:
+            raise forms.ValidationError("Please select at least one service.")
+        return services
 
 class ReviewForm(forms.ModelForm):
     class Meta:

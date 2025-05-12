@@ -29,7 +29,11 @@ class Profile(models.Model):
 class BusinessProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='business_profile')
     name = models.CharField(max_length=100, help_text="Enter your business name.")
-    services = MultiSelectField(choices=SERVICE_CHOICES, help_text="Select all services your business offers.")
+    services = MultiSelectField(
+        choices=SERVICE_CHOICES,
+        help_text="Select all services your business offers.",
+        blank=True
+    )
 
     service_location = models.CharField(max_length=255, help_text="Where is your business based?")
 
@@ -44,7 +48,11 @@ class BusinessProfile(models.Model):
 class ServiceRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='related_requests', default=1)
     title = models.CharField(max_length=100, help_text="Brief title for the request.")
-    services_needed = MultiSelectField(choices=SERVICE_CHOICES, help_text="Select all services your business offers.")
+    services_needed = MultiSelectField(
+        choices=SERVICE_CHOICES,
+        help_text="Select all services your business offers.",
+        blank=True
+    )
     location = models.CharField(max_length=100, help_text="Where should the service be delivered?")
     description = models.TextField(help_text="Additional details about the request.")
 

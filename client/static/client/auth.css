@@ -363,6 +363,20 @@
     border-color: var(--blue);
 }
 
+.bubble_field {
+    margin-bottom: 20px;
+}
+
+.bubble_field .form_error {
+    background-color: rgba(0, 100, 255, 0.1);
+    border-left: 4px solid var(--blue);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-top: 6px;
+    font-size: 0.9em;
+    color: var(--darkBlue);
+}
+
 @-webkit-keyframes check {
     0% {
         height: 0;
