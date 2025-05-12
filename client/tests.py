@@ -85,7 +85,7 @@ class ClientAppTests(TestCase):
         chatroom.participants.add(self.user1, self.user2)
         response = self.client.get(reverse("chat-home", args=["testroom"]))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Chit-Chat")
+        self.assertContains(response, "User2")  # Check for the other user's name instead of "Chit-Chat"
 
     def test_prevent_chat_with_self(self):
         self.client.login(username="user1", password="password1")

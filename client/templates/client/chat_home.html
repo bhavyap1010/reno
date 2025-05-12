@@ -25,7 +25,7 @@
         <!-- Chat Panel -->
         <div class="chat-main">
             {% if room_name %}
-                <h2>{{ other_user|title }}</h2> <!-- Updated header -->
+                <h2>Chit-Chat with {{ other_user|title }}</h2> <!-- Updated header -->
                 <div class="chat__item__container" id="id_chat_item_container">
                     {% for message in messages %}
                         <div class="chat-message {% if message.sender.username == request.user.username %}self{% else %}other{% endif %}">
