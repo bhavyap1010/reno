@@ -23,7 +23,7 @@
     <button type="submit">Request a Service</button>
 </form>
 
-<form action="{% url 'user-messages' %}" method="get">
+<form action="{% url 'chat-home' %}" method="get">
     <button type="submit">View Messages</button>
 </form>
 
@@ -64,26 +64,33 @@
 </ul>
 
 <script>
-
     function startChat(otherUser) {
-        const currentUser = "{{ request.user.username }}"; // Get the current user's username
-
-        fetch("{% url 'chat-start' %}", {
+        fetch("{% url 'chat-start' %}", { // Corrected URL to 'chat-start'
             method: 'POST',
             headers: {
-                'content-type': 'application/json',
-                'x-csrftoken': '{{ csrf_token }}'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
             },
             body: JSON.stringify({ other_user: otherUser })
         })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-
-                window.location.href = "/chat/" + data.room_name + "/";
-            });
-
-
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.room_name) {
+                const chatHomeUrl = "{% url 'chat-home' 'room_name_placeholder' %}".replace('room_name_placeholder', data.room_name);
+                window.location.href = chatHomeUrl;
+            } else {
+                throw new Error("Invalid response format");
+            }
+        })
+        .catch(error => {
+            console.error("Error starting chat:", error);
+            alert("Failed to start chat. Please try again.");
+        });
     }
 </script>
 {% endblock %}
