@@ -94,6 +94,12 @@
         {% if request.user != user %}
         <button class="card-button" onclick="startChat('{{ request.user.username }}')">Start Chat</button>
         {% endif %}
+        {% if request.user == user %}
+        <form method="post" action="{% url 'delete-service-request' request.id %}">
+            {% csrf_token %}
+            <button type="submit" class="card-button delete">Delete</button>
+        </form>
+        {% endif %}
     </div>
     {% empty %}
     <div>No service requests found.</div>
@@ -106,7 +112,6 @@
         overlay.style.display = overlay.style.display === "block" ? "none" : "block";
     }
 
-    // Optional: click outside sidebar to close
     document.addEventListener("click", function (e) {
         const overlay = document.getElementById("sidebarOverlay");
         const sidebar = document.querySelector(".sidebar");

@@ -222,6 +222,14 @@
     transition: background-color 0.3s ease;
 }
 
+.card-button.delete {
+    background-color: #e74c3c;
+}
+
+.card-button.delete:hover {
+    background-color: #c0392b;
+}
+
 .card-button:hover {
     background-color: var(--darkBlue);
 }

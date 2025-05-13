@@ -94,3 +94,27 @@ class ClientAppTests(TestCase):
         }, content_type="application/json")
         self.assertEqual(response.status_code, 400)  # Bad request for chatting with self
 
+    def test_delete_own_service_request(self):
+        self.client.login(username="user1", password="password1")
+        request_id = self.service_request.id
+
+        response = self.client.post(reverse("delete-service-request", args=[request_id]))
+
+        # Should redirect to home after deletion
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("home"))
+
+        # Check that the service request is deleted
+        self.assertFalse(ServiceRequest.objects.filter(id=request_id).exists())
+
+    def test_prevent_deletion_by_other_user(self):
+        self.client.login(username="user2", password="password2")
+        request_id = self.service_request.id
+
+        response = self.client.post(reverse("delete-service-request", args=[request_id]))
+
+        # Forbidden for non-owners
+        self.assertEqual(response.status_code, 403)
+
+        # Ensure the service request still exists
+        self.assertTrue(ServiceRequest.objects.filter(id=request_id).exists())
