@@ -1,16 +1,20 @@
 {% extends 'client/base.html' %}
 {% block content %}
-  <h2>Write a Review for {{ business.name }}</h2>
+  <div class="review-wrapper">
+    <div class="review-header">
+      <h2 class="review-title">Write a Review for {{ business.name }}</h2>
+    </div>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit Review</button>
-  </form>
+    <form method="post" class="review-form">
+      {% csrf_token %}
+      <div class="review-input-group">
+        {{ form.as_p }}
+      </div>
+      <button type="submit" class="review-submit-button">Submit Review</button>
+    </form>
 
-  <br>
-
-  <form action="{% url 'home' %}" method="get">
-      <button type="submit">Back to Dashboard</button>
-  </form>
+    <div class="review-back">
+      <a href="{% url 'home' %}" class="review-back-link">Back to Dashboard</a>
+    </div>
+  </div>
 {% endblock %}
