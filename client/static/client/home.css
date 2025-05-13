@@ -1,0 +1,179 @@
+/* Header layout */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background-color: #fff;
+    border-bottom: 2px solid #ccc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Logo */
+.logo {
+    font-size: 1.8em;
+    font-weight: bold;
+    border: 2px solid black;
+    padding: 5px 15px;
+    border-radius: 10px;
+}
+
+/* Search bar */
+.search-bar {
+    display: flex;
+    border: 2px solid black;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.search-bar input[type="text"] {
+    border: none;
+    padding: 10px;
+    font-size: 1em;
+    flex-grow: 1;
+    outline: none;
+}
+
+.search-bar button {
+    padding: 10px 15px;
+    border: none;
+    background-color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-left: 2px solid black;
+}
+
+/* Icon buttons */
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.4em;
+    padding: 10px;
+}
+
+/* Filter wrapper to align modal with icon */
+.filter-wrapper {
+    position: relative;
+}
+
+/* Filter modal positioned directly below filter icon */
+#filterModal {
+    display: none;
+    position: absolute;
+    top: 100%;           /* Show directly below icon */
+    left: 0;             /* Align left with button */
+    background: white;
+    border: 2px solid #ccc;
+    padding: 15px;
+    border-radius: 10px;
+    z-index: 999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.2s ease;
+    margin-top: 5px;     /* Add space below icon */
+    min-width: 180px;
+}
+
+#filterModal label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#filterModal input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+#filterModal button[type="submit"] {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .header {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 15px 20px;
+        gap: 10px;
+    }
+
+    .header-left {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .logo {
+        font-size: 1.5em;
+        padding: 5px 12px;
+        align-self: flex-start;
+    }
+
+    .search-bar {
+        flex-grow: 1;
+        width: 100%;
+    }
+
+    .search-bar input[type="text"] {
+        width: 100%;
+    }
+
+    .search-bar button {
+        width: 80px;
+    }
+
+    .filter-wrapper {
+        display: flex;
+        justify-content: flex-start;
+        width: 100%;
+        position: static;
+    }
+
+    .icon-button {
+        font-size: 1.4em;
+        padding: 8px;
+    }
+
+    /* Reposition the settings icon to the top-right */
+    .header > .icon-button {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+    }
+
+    #filterModal {
+        position: static !important;
+        display: none;
+        width: 100%;
+        margin-top: 10px;
+        border: 2px solid #ccc;
+        border-radius: 12px;
+        padding: 12px 16px;
+        background: white;
+        box-shadow: none;
+    }
+
+    #filterModal label {
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    #filterModal button[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        font-size: 1em;
+        margin-top: 10px;
+    }
+}

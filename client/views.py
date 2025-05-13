@@ -11,18 +11,27 @@ from django.http import JsonResponse as jsonresponse, HttpResponseBadRequest as 
 from django.views.decorators.csrf import csrf_exempt
 
 
+from django.shortcuts import render, redirect
+from .models import BusinessProfile, ServiceRequest
+
 def home(request):
     if not request.user.is_authenticated:
         return redirect("register")
 
-    query = request.GET.get('q')  # Get the search term from the query string
+    query = request.GET.get('q')
+    services = request.GET.getlist('services')  # Get multiple selected services
 
     businesses = BusinessProfile.objects.all()
+    service_requests = ServiceRequest.objects.all()
 
+    # Filter by search query
     if query:
-        service_requests = ServiceRequest.objects.filter(title__icontains=query)
-    else:
-        service_requests = ServiceRequest.objects.all()
+        service_requests = service_requests.filter(title__icontains=query)
+
+    # Filter by multiple services (AND logic)
+    if services:
+        for service in services:
+            service_requests = service_requests.filter(services_needed__icontains=service)
 
     context = {
         'businesses': businesses,
@@ -161,7 +170,7 @@ def business_detail(request, business_id):
 def chatPage(request, room_name=None):
     if request.method == 'POST':
         data = json.loads(request.body)
-        
+
         other_username = data.get('other_user')
         other_user = get_object_or_404(User, username=other_username)
         current_user = request.user
@@ -204,7 +213,7 @@ def chatPage(request, room_name=None):
         return render(request, 'client/chatpage.html', context)
 
 def user_messages(request):
-    Chatrooms = request.user.Chatrooms.all()  
+    Chatrooms = request.user.Chatrooms.all()
 
     rooms_with_users = []
     for room in Chatrooms:
@@ -216,7 +225,7 @@ def user_messages(request):
 
 @login_required
 def chat_home(request, room_name=None):
-    Chatrooms = request.user.Chatrooms.all()  
+    Chatrooms = request.user.Chatrooms.all()
 
     # build the sidebar list
     rooms_with_users = []

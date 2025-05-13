@@ -1,12 +1,49 @@
 {% extends 'client/base.html' %}
 
+{% load static %}
 {% block content %}
-<h1>Dashboard</h1>
+<link rel="stylesheet" href="{% static 'client/home.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<form class="search" action="{% url 'home' %}" method="get">
-    <input type="text" name="q">
-    <button type="submit">Search</button>
-</form>
+<!-- Header -->
+<div class="header">
+    <div class="header-left">
+        <div class="logo">Reno</div>
+
+        <form class="search-bar" action="{% url 'home' %}" method="get">
+            <input type="text" name="q" placeholder="Search" value="{{ request.GET.q }}">
+            <button type="submit">Search</button>
+        </form>
+
+        <div class="filter-wrapper">
+            <button class="icon-button" onclick="toggleFilterModal()" title="Filter">
+                <i class="fa-solid fa-filter"></i>
+            </button>
+
+            <div id="filterModal">
+                <form method="get" action="{% url 'home' %}">
+                    {% if request.GET.q %}
+                        <input type="hidden" name="q" value="{{ request.GET.q }}">
+                    {% endif %}
+                    <label><input type="checkbox" name="services" value="cleaning"> Cleaning</label>
+                    <label><input type="checkbox" name="services" value="plumbing"> Plumbing</label>
+                    <label><input type="checkbox" name="services" value="electrical"> Electrical</label>
+                    <label><input type="checkbox" name="services" value="landscaping"> Landscaping</label>
+                    <label><input type="checkbox" name="services" value="delivery"> Delivery</label>
+                    <br>
+                    <button type="submit">Apply</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Icon -->
+    <button class="icon-button" title="Settings">
+        <i class="fa-solid fa-cog"></i>
+    </button>
+</div>
+
+<h1>Dashboard</h1>
 
 <form action="{% url 'logout-user' %}" method="post">
     {% csrf_token %}
@@ -64,8 +101,22 @@
 </ul>
 
 <script>
+    function toggleFilterModal() {
+        const modal = document.getElementById("filterModal");
+        modal.style.display = modal.style.display === "block" ? "none" : "block";
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById("filterModal");
+        const filterBtn = document.querySelector('.fa-filter');
+        if (!modal.contains(event.target) && !filterBtn.contains(event.target)) {
+            modal.style.display = 'none';
+        }
+    });
+
     function startChat(otherUser) {
-        fetch("{% url 'chat-start' %}", { // Corrected URL to 'chat-start'
+        fetch("{% url 'chat-start' %}", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
