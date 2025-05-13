@@ -53,7 +53,7 @@
 
         {% if user.profile.account_type == 'business' %}
         <form method="get" action="{% url 'business-profile' %}">
-            <button type="submit" class="sidebar-btn">Create Business Listing</button>
+            <button type="submit" class="sidebar-btn">Create/Edit Profile</button>
         </form>
         {% endif %}
 
@@ -69,40 +69,36 @@
 </div>
 
 <h2>Businesses</h2>
-<ul>
+<div class="scroll-container">
     {% for business in businesses %}
-    <li>
-        <strong>
-            <a href="{% url 'business-detail' business.id %}">
-                {{ business.name }}
-            </a>
-        </strong><br>
-        Services: {{ business.services }}<br>
-        Location: {{ business.service_location }}<br>
-        <a href="{% url 'write-review' business.id %}">Review</a>
-    </li>
+    <div class="card">
+        <h3><a href="{% url 'business-detail' business.id %}">{{ business.name }}</a></h3>
+        <p><strong>Services:</strong> {{ business.services }}</p>
+        <p><strong>Location:</strong> {{ business.service_location }}</p>
+        <a href="{% url 'write-review' business.id %}" class="card-button">Write a Review</a>
+    </div>
     {% empty %}
-    <li>No businesses available.</li>
+    <div>No businesses available.</div>
     {% endfor %}
-</ul>
+</div>
 
 <h2>Service Requests</h2>
-<ul>
+<div class="scroll-container">
     {% for request in service_requests %}
-    <li>
-        <strong>{{ request.title }}</strong><br>
-        Needed Services: {{ request.services_needed }}<br>
-        Location: {{ request.location }}<br>
-        Description: {{ request.description }} <br>
-        Created By: {{ request.user.username }} <br>
+    <div class="card">
+        <h3>{{ request.title }}</h3>
+        <p><strong>Needed Services:</strong> {{ request.services_needed }}</p>
+        <p><strong>Location:</strong> {{ request.location }}</p>
+        <p><strong>Description:</strong> {{ request.description|truncatechars:100 }}</p>
+        <p><strong>Created By:</strong> {{ request.user.username }}</p>
         {% if request.user != user %}
-        <a href="javascript:void(0);" onclick="startChat('{{ request.user.username }}')">Start Chat</a>
+        <button class="card-button" onclick="startChat('{{ request.user.username }}')">Start Chat</button>
         {% endif %}
-    </li>
+    </div>
     {% empty %}
-    <li>No service requests found.</li>
+    <div>No service requests found.</div>
     {% endfor %}
-</ul>
+</div>
 
 <script>
     function toggleSidebar() {
