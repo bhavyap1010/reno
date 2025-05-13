@@ -17,11 +17,13 @@
 
 /* Logo */
 .logo {
-    font-size: 1.8em;
+    font-size: 2.5em;
     font-weight: bold;
-    border: 2px solid black;
-    padding: 5px 15px;
-    border-radius: 10px;
+    color: var(--darkBlue);
+    padding: 5px 0px 10px 0px;
+    padding-right: 25px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: none;
 }
 
 /* Search bar */
@@ -43,7 +45,8 @@
 .search-bar button {
     padding: 10px 15px;
     border: none;
-    background-color: white;
+    background-color: var(--blue);
+    color: white;
     font-weight: bold;
     cursor: pointer;
     border-left: 2px solid black;
@@ -56,6 +59,10 @@
     cursor: pointer;
     font-size: 1.4em;
     padding: 10px;
+}
+
+.icon-button i.fa-filter {
+    color: var(--blue);
 }
 
 /* Filter wrapper to align modal with icon */
@@ -92,11 +99,80 @@
 #filterModal button[type="submit"] {
     margin-top: 10px;
     padding: 6px 12px;
-    background-color: black;
+    background-color: var(--blue);
     color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.sidebar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 300px;
+    background: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: -3px 0 10px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.close-btn {
+    align-self: flex-end;
+    background: none;
+    border: none;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.sidebar-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    border: 1px solid black;
+    background: white;
+    cursor: pointer;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.logout-form {
+    position: absolute;
+    bottom: 10%;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    border: none;
+    background: var(--blue);
+    color: white;
+    cursor: pointer;
+    border-radius: 15px;
+    transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: var(--darkBlue);
 }
 
 @media (max-width: 768px) {

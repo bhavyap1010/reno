@@ -38,31 +38,35 @@
     </div>
 
     <!-- Settings Icon -->
-    <button class="icon-button" title="Settings">
+    <button class="icon-button" title="Settings" onclick="toggleSidebar()">
         <i class="fa-solid fa-cog"></i>
     </button>
 </div>
 
-<h1>Dashboard</h1>
+<div id="sidebarOverlay" class="sidebar-overlay">
+    <div class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">&times;</button>
 
-<form action="{% url 'logout-user' %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Logout</button>
-</form>
+        <form method="get" action="{% url 'chat-home' %}">
+            <button type="submit" class="sidebar-btn">View Messages</button>
+        </form>
 
-{% if user.profile.account_type == 'business' %}
-<form action="{% url 'business-profile' %}" method="get">
-    <button type="submit">Create Business Listing</button>
-</form>
-{% endif %}
+        {% if user.profile.account_type == 'business' %}
+        <form method="get" action="{% url 'business-profile' %}">
+            <button type="submit" class="sidebar-btn">Create Business Listing</button>
+        </form>
+        {% endif %}
 
-<form action="{% url 'request-service' %}" method="get">
-    <button type="submit">Request a Service</button>
-</form>
+        <form method="get" action="{% url 'request-service' %}">
+            <button type="submit" class="sidebar-btn">Request Service</button>
+        </form>
 
-<form action="{% url 'chat-home' %}" method="get">
-    <button type="submit">View Messages</button>
-</form>
+        <form method="post" action="{% url 'logout-user' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+</div>
 
 <h2>Businesses</h2>
 <ul>
@@ -101,6 +105,23 @@
 </ul>
 
 <script>
+    function toggleSidebar() {
+        const overlay = document.getElementById("sidebarOverlay");
+        overlay.style.display = overlay.style.display === "block" ? "none" : "block";
+    }
+
+    // Optional: click outside sidebar to close
+    document.addEventListener("click", function (e) {
+        const overlay = document.getElementById("sidebarOverlay");
+        const sidebar = document.querySelector(".sidebar");
+        const settingsBtn = document.querySelector('.fa-cog');
+        if (overlay.style.display === "block" &&
+            !sidebar.contains(e.target) &&
+            !settingsBtn.contains(e.target)) {
+            overlay.style.display = "none";
+        }
+    });
+
     function toggleFilterModal() {
         const modal = document.getElementById("filterModal");
         modal.style.display = modal.style.display === "block" ? "none" : "block";
