@@ -1,7 +1,17 @@
-{% extends 'client/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-    <h2>{{ business.name }}</h2>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'client/business_detail.css' %}">
+</head>
+
+<body>
+    {% block content %}
+    <h2 style="color: red;">{{ business.name }}</h2>
     <p>Services: {{ business.services }}</p>
     <p>Location: {{ business.service_location }}</p>
 
@@ -26,4 +36,8 @@
     <form action="{% url 'home' %}" method="get">
         <button type="submit">Back to Dashboard</button>
     </form>
-{% endblock %}
+    {% endblock %}
+</body>
+
+</html>
+
