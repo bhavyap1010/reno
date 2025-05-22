@@ -9,6 +9,7 @@ import json
 import secrets
 from django.http import JsonResponse as jsonresponse, HttpResponseBadRequest as httpresponsebadrequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
 
 
 from django.shortcuts import render, redirect
@@ -140,6 +141,20 @@ def create_service_request(request):
     else:
         form = ServiceRequestForm()
     return render(request, 'client/service_request_form.html', {'form': form})
+
+@login_required
+def delete_service_request(request, request_id):
+    service_request = get_object_or_404(ServiceRequest, id=request_id)
+
+    if service_request.user != request.user:
+        return HttpResponseForbidden("You are not allowed to delete this request.")
+
+    if request.method == 'POST':
+        service_request.delete()
+        messages.success(request, "Service request deleted successfully.")
+        return redirect('home')
+    else:
+        return HttpResponseForbidden("Invalid request method.")
 
 @login_required
 def write_review(request, business_id):
