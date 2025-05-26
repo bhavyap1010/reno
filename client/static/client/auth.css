@@ -2,8 +2,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: "Amazon Ember",Arial,sans-serif;
 }
-
 
 .clearfix:after {
     content: "";
@@ -148,6 +148,7 @@
     -ms-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
     border-radius: 10px;
+    background-color: var(--darkBlue);
 }
 
 .form_wrapper input[type=submit]:hover {
@@ -311,7 +312,7 @@
     pointer-events: none;
     border-width: 8px 5px 0 5px;
     border-style: solid;
-    border-color: #7b7b7b transparent transparent transparent;
+    border-color: var(--selectArrow) transparent transparent transparent;
 }
 
 .select_option select:hover+.select_arrow,
@@ -345,9 +346,9 @@
 .bubble-group label {
     padding: 10px 16px;
     border-radius: 20px;
-    background: #f0f0f0;
-    color: #333;
-    border: 1px solid #ccc;
+    background: var(--bubbleBg);
+    color: var(--bubbleText);
+    border: 1px solid var(--bubbleBorder);
     cursor: pointer;
     font-size: 0.95em;
     transition: background-color 0.2s ease-in-out;
@@ -364,7 +365,7 @@
 }
 
 .bubble_field .form_error {
-    background-color: rgba(0, 100, 255, 0.1);
+    background-color: var(--bubbleErrorBg);
     border-left: 4px solid var(--blue);
     border-radius: 12px;
     padding: 10px 14px;
@@ -374,12 +375,12 @@
 }
 
 .error-messages {
-    background-color: #ffe6e6;
-    border: 1px solid #ff4d4d;
+    background-color: var(--errorBg);
+    border: 1px solid var(--errorBorder);
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
-    color: #b30000;
+    color: var(--errorRed);
 }
 .error-messages ul {
     margin: 0;
@@ -538,25 +539,25 @@
 }
 
 .signup_link a {
-  color: #0066c0;
+  color: var(--signupLink);
   text-decoration: none;
 }
 
 .signup_link a:hover {
-  color: #c45500;
+  color: var(--signupLinkHover);
   text-decoration: underline;
 }
 
 .signup_link p:last-child {
   font-size: small;
   line-height: 1.4;
-  color: #555;
+  color: var(--signupText);
 }
 
 /* Django form field specific styling */
 input[id^="id_"] {
   padding: 8px 12px;
-  border: 1px solid #a6a6a6;
+  border: 1px solid var(--inputBorder);
   border-radius: 4px;
   font-size: 13px;
   background: #ffffff;
@@ -568,8 +569,8 @@ input[id^="id_"] {
 }
 
 input[id^="id_"]:focus {
-  border-color: #e77600;
-  box-shadow: 0 0 3px 2px rgba(228, 121, 17, 0.5);
+  border-color: var(--inputFocus);
+  box-shadow: 0 0 3px 2px var(--inputFocusShadow);
 }
 
 /* Error handling - Amazon style */
@@ -593,11 +594,11 @@ input[id^="id_"]:focus {
 }
 
 .messages .success {
-  background: #dff0d8;
-  color: #3c763d;
+  background: var(--successBg);
+  color: var(--successGreen);
   padding: 8px 12px;
   border-radius: 4px;
-  border: 1px solid #d6e9c6;
+  border: 1px solid var(--successBorder);
   font-size: 12px;
 }
 
@@ -659,7 +660,7 @@ input[id^="id_"]:focus {
   text-align: center;
   margin-top: 18px;
   padding-top: 18px;
-  border-top: 1px solid #e7e7e7;
+  border-top: 1px solid var(--newCustomerBorder);
 }
 
 .new-customer h5 {
@@ -673,9 +674,9 @@ input[id^="id_"]:focus {
 input[type="submit"]:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  background: #f7f7f7;
-  border-color: #adb1b8;
-  color: #767676;
+  background: var(--disabledBg);
+  border-color: var(--disabledBorder);
+  color: var(--disabledText);
 }
 
 /* Clean, minimal focus states */
