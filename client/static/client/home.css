@@ -223,11 +223,11 @@
 }
 
 .card-button.delete {
-    background-color: #e74c3c;
+    background-color: var(--red);
 }
 
 .card-button.delete:hover {
-    background-color: #c0392b;
+    background-color: var(--darkRed);
 }
 
 .card-button:hover {
