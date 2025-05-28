@@ -3,35 +3,174 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="{% static 'client/root.css' %}">
-  <link rel="stylesheet" href="{% static 'client/write_review.css' %}">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write Review</title>
+    <link rel="stylesheet" href="{% static 'client/root.css' %}">
+    <link rel="stylesheet" href="{% static 'client/write_review.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
-  {% block content %}
+    <div class="auth-center-wrapper">
+        <div class="auth-logo">
+            <svg width="15vw" height="calc(15vw * 0.4)" viewBox="0 0 160 64" xmlns="http://www.w3.org/2000/svg"
+                style="min-width: 200px; min-height: 80px; max-width: 320px; max-height: 128px;">
+                <!-- Grid pattern on the left -->
+                <rect x="15" y="22" width="10" height="10" fill="#1e293b" rx="1" />
+                <rect x="27" y="22" width="10" height="10" fill="#64748b" rx="1" />
+                <rect x="15" y="34" width="10" height="10" fill="#64748b" rx="1" />
+                <rect x="27" y="34" width="10" height="10" fill="#1e293b" rx="1" />
+                <text x="55" y="40" font-family="system-ui, sans-serif" font-size="20" font-weight="300" fill="#1e293b"
+                    letter-spacing="3px">RENO</text>
+            </svg>
+        </div>
 
-  <div class="review-wrapper">
-    <div class="review-header">
-      <h2 class="review-title">Write a Review for {{ business.name }}</h2>
+        {% block content %}
+        <div class="review-wrapper">
+            <div class="review-header">
+                <h2 class="review-title">Write Review</h2>
+            </div>
+            <form method="post" class="review-form" id="reviewForm">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="error-messages">
+                    <ul>
+                        {% for field in form %}
+                        {% for error in field.errors %}
+                        <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Star Rating System -->
+                <div class="star-rating-container">
+                    <label class="star-rating-label">Rating *</label>
+                    <div class="star-rating" id="starRating">
+                        <button type="button" class="star-button" data-rating="1">
+                            <i class="fas fa-star star-icon"></i>
+                        </button>
+                        <button type="button" class="star-button" data-rating="2">
+                            <i class="fas fa-star star-icon"></i>
+                        </button>
+                        <button type="button" class="star-button" data-rating="3">
+                            <i class="fas fa-star star-icon"></i>
+                        </button>
+                        <button type="button" class="star-button" data-rating="4">
+                            <i class="fas fa-star star-icon"></i>
+                        </button>
+                        <button type="button" class="star-button" data-rating="5">
+                            <i class="fas fa-star star-icon"></i>
+                        </button>
+                        <span class="rating-text" id="ratingText"></span>
+                    </div>
+                    <div class="rating-helper">Click on stars to rate (1-5)</div>
+                    <input type="hidden" name="rating" id="ratingInput" required>
+                </div>
+
+                <div class="review-input-group">
+                    {% for field in form %}
+                        {% if field.name != 'rating' %}
+                            <p>
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="helptext">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="errorlist">{{ error }}</div>
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                <button type="submit" class="review-submit-button" id="submitBtn" disabled>Submit Review</button>
+            </form>
+            <div class="review-back">
+                <a href="{% url 'home' %}" class="review-back-link">← Back to Dashboard</a>
+            </div>
+        </div>
+        {% endblock %}
     </div>
 
-    <form method="post" class="review-form">
-      {% csrf_token %}
-      <div class="review-input-group">
-        {{ form.as_p }}
-      </div>
-      <button type="submit" class="review-submit-button">Submit Review</button>
-    </form>
+    <script>
+        // Star rating functionality
+        const starButtons = document.querySelectorAll('.star-button');
+        const ratingInput = document.getElementById('ratingInput');
+        const ratingText = document.getElementById('ratingText');
+        const submitBtn = document.getElementById('submitBtn');
+        const commentField = document.querySelector('textarea[name="comment"]');
+        
+        let currentRating = 0;
 
-    <div class="review-back">
-      <a href="{% url 'home' %}" class="review-back-link">Back to Dashboard</a>
-    </div>
-  </div>
-{% endblock %}
+        // Star rating handlers
+        starButtons.forEach((button, index) => {
+            const star = button.querySelector('.star-icon');
+            
+            button.addEventListener('click', () => {
+                currentRating = index + 1;
+                ratingInput.value = currentRating;
+                updateStars();
+                updateRatingText();
+                checkFormValidity();
+            });
+
+            button.addEventListener('mouseenter', () => {
+                updateStars(index + 1);
+            });
+
+            button.addEventListener('mouseleave', () => {
+                updateStars();
+            });
+        });
+
+        function updateStars(hoverRating = null) {
+            const rating = hoverRating || currentRating;
+            starButtons.forEach((button, index) => {
+                const star = button.querySelector('.star-icon');
+                star.classList.remove('filled', 'hover');
+                
+                if (index < rating) {
+                    if (hoverRating && !currentRating) {
+                        star.classList.add('hover');
+                    } else {
+                        star.classList.add('filled');
+                    }
+                }
+            });
+        }
+
+        function updateRatingText() {
+            if (currentRating > 0) {
+                const ratingTexts = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+                ratingText.textContent = `${currentRating}/5 - ${ratingTexts[currentRating - 1]}`;
+            } else {
+                ratingText.textContent = '';
+            }
+        }
+
+        // Form validation
+        function checkFormValidity() {
+            const commentValue = commentField ? commentField.value.trim() : '';
+            const isValid = currentRating > 0 && commentValue.length > 0;
+            submitBtn.disabled = !isValid;
+        }
+
+        // Comment field validation
+        if (commentField) {
+            commentField.addEventListener('input', checkFormValidity);
+        }
+
+        // Initial check
+        checkFormValidity();
+    </script>
 </body>
 
 </html>
