@@ -1,0 +1,33 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Continue with Google</title>
+    <link rel="stylesheet" href="{% static 'client/root.css' %}">
+    <link rel="stylesheet" href="{% static 'client/auth.css' %}">
+</head>
+<body>
+<div class="auth-center-wrapper">
+    <div class="form_wrapper">
+        <div class="title_container">
+            <h2>Continue with Google</h2>
+        </div>
+
+        <p style="text-align: center;">
+            You are about to sign in using your Google account.
+        </p>
+
+        <form method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <input type="submit" value="Continue" class="social-login-button">
+        </form>
+
+        <div class="signup_link">
+            <p><a href="{% url 'account_login' %}">Back to Sign In</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

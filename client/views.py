@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.models import User
 from .forms import BusinessForm, ServiceRequestForm, ReviewForm, PostSignupForm
 from .models import Profile, BusinessProfile, ServiceRequest, Chatroom, Message
@@ -230,20 +230,34 @@ def start_chat(request):
 
 @login_required
 def choose_account_type_and_username(request):
-    if hasattr(request.user, 'profile') and request.user.username:
+    # If profile already exists, skip this step
+    if hasattr(request.user, 'profile'):
         return redirect('/')
 
     if request.method == 'POST':
         form = PostSignupForm(request.POST)
         if form.is_valid():
-            request.user.username = form.cleaned_data['username']
+            new_username = form.cleaned_data['username']
+            account_type = form.cleaned_data['account_type']
+
+            existing_user = User.objects.exclude(pk=request.user.pk).filter(username=new_username).first()
+
+            if existing_user:
+                if existing_user.email == request.user.email:
+                    existing_user.delete()
+                else:
+                    messages.error(request, "That username is already taken.")
+                    return render(request, 'client/choose_account_type_and_username.html', {'form': form})
+
+            request.user.username = new_username
             request.user.save()
-            Profile.objects.create(
-                user=request.user,
-                account_type=form.cleaned_data['account_type']
-            )
+            Profile.objects.create(user=request.user, account_type=account_type)
             return redirect('/')
     else:
-        form = PostSignupForm()
+        initial = {}
+        if not hasattr(request.user, 'profile'):
+            initial['username'] = request.user.username
+        form = PostSignupForm(initial=initial)
 
     return render(request, 'client/choose_account_type_and_username.html', {'form': form})
+

@@ -133,22 +133,21 @@
 }
 
 .form_wrapper input[type=submit] {
-    background: var(--blue);
-    height: 35px;
-    line-height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
     width: 100%;
     border: none;
     outline: none;
     cursor: pointer;
     color: #fff;
     font-size: 1.1em;
+    font-weight: bold;
     margin-bottom: 10px;
-    -webkit-transition: all 0.3s ease-in-out;
-    -moz-transition: all 0.3s ease-in-out;
-    -ms-transition: all 0.3s ease-in-out;
-    transition: all 0.3s ease-in-out;
     border-radius: 10px;
     background-color: var(--darkBlue);
+    transition: all 0.3s ease-in-out;
 }
 
 .form_wrapper input[type=submit]:hover {
@@ -691,7 +690,6 @@ select:focus {
 }
 
 .social-login-button {
-    margin-top: 10px;
     background-color: #4285F4; /* Google Blue */
     color: white;
     border: none;
@@ -716,4 +714,23 @@ select:focus {
   display: flex;
   justify-content: center;
   width: 100%;
+}
+
+#id_remember {
+  all: unset !important;
+  appearance: checkbox !important;
+  display: inline-block !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin-right: 8px !important;
+  vertical-align: middle !important;
+  cursor: pointer;
+  accent-color: #4285f4 !important;
+  background-color: transparent !important;
+  border: 1px solid #888 !important;
+  border-radius: 3px;
+}
+
+form p {
+  margin-bottom: 18px;
 }
