@@ -18,7 +18,8 @@ class Profile(models.Model):
     account_type = models.CharField(
         max_length=10,
         choices=[('individual', 'Individual'), ('business', 'Business')],
-        help_text="Select the type of user account."
+        help_text="Select the type of user account.",
+        blank=False
     )
     email_is_verified = models.BooleanField(default=False)
 

@@ -1,0 +1,10 @@
+{% extends "client/base.html" %}
+
+{% block content %}
+<h2>Complete Your Profile</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Continue</button>
+</form>
+{% endblock %}
