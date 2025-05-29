@@ -302,3 +302,12 @@ def start_chat(request):
             return jsonresponse({'error': str(e)}, status=500)
     else:
         return jsonresponse({'error': "Invalid request method."}, status=405)
+
+def service_request_detail(request, request_id):
+    service_request = get_object_or_404(ServiceRequest, id=request_id)
+    image = service_request.image
+    images = [image] if image else []
+    return render(request, 'client/service_request_detail.html', {
+        'service_request': service_request,
+        'images': images
+    })

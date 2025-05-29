@@ -18,4 +18,5 @@ urlpatterns = [
     path("chats/<str:room_name>/", views.chat_home, name="chat-home"),
     path("start-chat/", views.start_chat, name="chat-start"),  # assuming this view exists
     path('delete-request/<int:request_id>/', views.delete_service_request, name='delete-service-request'),
+    path('service-request/<int:request_id>/', views.service_request_detail, name='service-request-detail'),
 ]

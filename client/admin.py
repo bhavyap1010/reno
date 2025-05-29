@@ -50,7 +50,7 @@ class ServiceRequestAdmin(admin.ModelAdmin):
 
     def image_tag(self, obj):
         if obj.image:
-            return f'<img src="{obj.image.url}" style="max-height:80px; max-width:120px; border-radius:8px;" />'
+            return f'<img src="{obj.image.url}" '
         return "-"
     image_tag.short_description = 'Image'
     image_tag.allow_tags = True

@@ -91,15 +91,18 @@
         <p><strong>Location:</strong> {{ request.location }}</p>
         <p><strong>Description:</strong> {{ request.description|truncatechars:100 }}</p>
         <p><strong>Created By:</strong> {{ request.user.username }}</p>
-        {% if request.user != user %}
-        <button class="card-button" onclick="startChat('{{ request.user.username }}')">Start Chat</button>
-        {% endif %}
-        {% if request.user == user %}
-        <form method="post" action="{% url 'delete-service-request' request.id %}">
-            {% csrf_token %}
-            <button type="submit" class="card-button delete">Delete</button>
-        </form>
-        {% endif %}
+        <div style="display: flex; gap: 8px;">
+            <a href="{% url 'service-request-detail' request.id %}" class="card-button" style="flex:1; text-align:center;">View</a>
+            {% if request.user != user %}
+            <button class="card-button" onclick="startChat('{{ request.user.username }}')">Start Chat</button>
+            {% endif %}
+            {% if request.user == user %}
+            <form method="post" action="{% url 'delete-service-request' request.id %}">
+                {% csrf_token %}
+                <button type="submit" class="card-button delete">Delete</button>
+            </form>
+            {% endif %}
+        </div>
     </div>
     {% empty %}
     <div>No service requests found.</div>
