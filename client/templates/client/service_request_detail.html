@@ -63,7 +63,7 @@
         {% if images %}
         <div class="service-detail-images">
             {% for img in images %}
-            <img src="{{ img.url }}" alt="Service Photo">
+                <img src="{{ img.image.url }}" alt="Service Photo" style="max-width:150px;max-height:150px;">
             {% endfor %}
         </div>
         {% endif %}

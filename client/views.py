@@ -311,8 +311,8 @@ def start_chat(request):
 
 def service_request_detail(request, request_id):
     service_request = get_object_or_404(ServiceRequest, id=request_id)
-    image = service_request.image
-    images = [image] if image else []
+    images = service_request.images.all()
+    print(images)
     return render(request, 'client/service_request_detail.html', {
         'service_request': service_request,
         'images': images
