@@ -45,15 +45,15 @@ class BusinessProfileAdmin(admin.ModelAdmin):
 
 # ServiceRequest Admin
 class ServiceRequestAdmin(admin.ModelAdmin):
-    list_display = ('title', 'get_user', 'location', 'display_services')
+    list_display = ('title', 'user', 'location')
+    readonly_fields = ('image_tag',)
 
-    def get_user(self, obj):
-        return obj.user.username
-    get_user.short_description = 'User'
-
-    def display_services(self, obj):
-        return ", ".join(obj.services_needed)
-    display_services.short_description = 'Services Needed'
+    def image_tag(self, obj):
+        if obj.image:
+            return f'<img src="{obj.image.url}" style="max-height:80px; max-width:120px; border-radius:8px;" />'
+        return "-"
+    image_tag.short_description = 'Image'
+    image_tag.allow_tags = True
 
 class chatRoomAdmin(admin.ModelAdmin):
     list_display = ('room_name',)
