@@ -84,16 +84,34 @@ class BusinessForm(forms.ModelForm):
             raise forms.ValidationError("Please select at least one service.")
         return services
 
+
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            return [single_file_clean(d, initial) for d in data]
+        return [single_file_clean(data, initial)]
+
+
 class ServiceRequestForm(forms.ModelForm):
+    images = MultipleFileField(required=False)  # <-- Not "image", use many
+
     class Meta:
         model = ServiceRequest
-        fields = ['title', 'services_needed', 'location', 'description', 'image']  # <-- Add 'image'
+        fields = ['title', 'services_needed', 'location', 'description']
+
         widgets = {
             'services_needed': forms.CheckboxSelectMultiple(),
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Service Title'}),
-            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Location'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe your request'}),
-            'image': forms.ClearableFileInput(attrs={'accept': 'image/*'}),  # <-- Add widget for image
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'location': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
     def clean_services_needed(self):

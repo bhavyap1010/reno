@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from .forms import SignUpForm, VerificationCodeForm, CustomAuthenticationForm, BusinessForm, ServiceRequestForm, ReviewForm
 from .emailVerification import AccountActivationManager
-from .models import BusinessProfile, ServiceRequest, Chatroom, Message
+from .models import BusinessProfile, ServiceRequest, Chatroom, Message, ServiceRequestImage
 from django.contrib.auth.decorators import login_required
 import json
 import secrets
@@ -132,11 +132,17 @@ def create_or_edit_business_profile(request):
 @login_required
 def create_service_request(request):
     if request.method == 'POST':
-        form = ServiceRequestForm(request.POST, request.FILES)  # <-- Add request.FILES
+        form = ServiceRequestForm(request.POST, request.FILES)
         if form.is_valid():
             service_request = form.save(commit=False)
             service_request.user = request.user
             service_request.save()
+
+            # Save multiple images
+            files = request.FILES.getlist('images')
+            for f in files:
+                ServiceRequestImage.objects.create(service_request=service_request, image=f)
+
             return redirect('home')
     else:
         form = ServiceRequestForm()

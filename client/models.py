@@ -46,23 +46,22 @@ class BusinessProfile(models.Model):
 
 
 class ServiceRequest(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='related_requests', default=1)
-    title = models.CharField(max_length=100, help_text="Brief title for the request.")
-    services_needed = MultiSelectField(
-        choices=SERVICE_CHOICES,
-        help_text="Select all services your business offers.",
-        blank=True
-    )
-    location = models.CharField(max_length=100, help_text="Where should the service be delivered?")
-    description = models.TextField(help_text="Additional details about the request.")
-    image = models.ImageField(upload_to='service_requests/', blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='related_requests')
+    title = models.CharField(max_length=100)
+    services_needed = MultiSelectField(choices=SERVICE_CHOICES, blank=True)
+    location = models.CharField(max_length=100)
+    description = models.TextField()
 
     def __str__(self):
         return self.title
 
-    class Meta:
-        verbose_name = "Service Request"
-        verbose_name_plural = "Service Requests"
+
+class ServiceRequestImage(models.Model):
+    service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='service_requests/')
+
+    def __str__(self):
+        return f"Image for {self.service_request.title}"
 
 
 class Review(models.Model):

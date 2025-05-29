@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import Profile, BusinessProfile, ServiceRequest, Review, Chatroom, Message
+from .models import Profile, BusinessProfile, ServiceRequest, Review, Chatroom, Message, ServiceRequestImage
 from .forms import SignUpForm
 
 # Inline Profile inside User
@@ -43,10 +43,25 @@ class BusinessProfileAdmin(admin.ModelAdmin):
         return ", ".join(obj.services)
     display_services.short_description = 'Services'
 
+# ServiceRequestImage Admin
+class ServiceRequestImageInline(admin.TabularInline):
+    model = ServiceRequestImage
+    extra = 1  # Number of extra forms to show
+    fields = ['image', 'image_tag']
+    readonly_fields = ['image_tag']
+
+    def image_tag(self, obj):
+        if obj.image:
+            return f'<img src="{obj.image.url}" style="max-height:100px;"/>'
+        return ""
+    image_tag.allow_tags = True
+    image_tag.short_description = 'Preview'
+
 # ServiceRequest Admin
 class ServiceRequestAdmin(admin.ModelAdmin):
     list_display = ('title', 'user', 'location')
     readonly_fields = ('image_tag',)
+    inlines = [ServiceRequestImageInline]
 
     def image_tag(self, obj):
         if obj.image:
