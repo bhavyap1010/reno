@@ -16,7 +16,7 @@
       <h2>Business Profile</h2>
     </div>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
       <div class="input_field">
@@ -44,6 +44,11 @@
       <div class="input_field">
         <span><i class="fas fa-location-dot"></i></span>
         {{ form.service_location }}
+      </div>
+
+      <div class="input_field">
+        <span><i class="fas fa-image"></i></span>
+        {{ form.image }}
       </div>
 
       <input type="submit" value="Save">

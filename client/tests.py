@@ -141,3 +141,24 @@ class ServiceRequestImageUploadTest(TestCase):
         )
         self.assertIsNotNone(service_request.image)
         self.assertTrue(service_request.image.name.startswith('service_requests/'))
+
+class BusinessProfileImageUploadTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='bizuser', password='testpass')
+
+    def test_business_profile_image_upload(self):
+        self.client.login(username='bizuser', password='testpass')
+        image = SimpleUploadedFile(
+            name='biz_image.jpg',
+            content=b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xFF\xFF\xFF\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x4C\x01\x00\x3B',
+            content_type='image/jpeg'
+        )
+        profile = BusinessProfile.objects.create(
+            user=self.user,
+            name='Biz Name',
+            services=['cleaning'],
+            service_location='Biz Location',
+            image=image
+        )
+        self.assertIsNotNone(profile.image)
+        self.assertTrue(profile.image.name.startswith('business_profiles/'))

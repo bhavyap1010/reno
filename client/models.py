@@ -34,8 +34,8 @@ class BusinessProfile(models.Model):
         help_text="Select all services your business offers.",
         blank=True
     )
-
     service_location = models.CharField(max_length=255, help_text="Where is your business based?")
+    image = models.ImageField(upload_to='business_profiles/', blank=True, null=True)
 
     def __str__(self):
         return self.name

@@ -70,11 +70,12 @@ class VerificationCodeForm(forms.Form):
 class BusinessForm(forms.ModelForm):
     class Meta:
         model = BusinessProfile
-        fields = ['name', 'services', 'service_location']
+        fields = ['name', 'services', 'service_location', 'image']  # <-- Add 'image'
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Business Name'}),
             'services': forms.CheckboxSelectMultiple(),
             'service_location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Location'}),
+            'image': forms.ClearableFileInput(attrs={'accept': 'image/*'}),  # <-- Add widget for image
         }
 
     def clean_services(self):

@@ -120,7 +120,7 @@ def create_or_edit_business_profile(request):
     profile, created = BusinessProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
-        form = BusinessForm(request.POST, instance=profile)
+        form = BusinessForm(request.POST, request.FILES, instance=profile)  # <-- Add request.FILES
         if form.is_valid():
             form.save()
             return redirect('home')
