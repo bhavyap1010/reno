@@ -53,7 +53,8 @@
 
       <div class="input_field">
         <span><i class="fas fa-image"></i></span>
-        {{ form.image }}
+        <input type="file" name="images" multiple accept="image/*">
+        <div style="font-size:12px;color:#888;">You can upload up to 5 images.</div>
       </div>
 
       <input type="submit" value="Submit Request">
