@@ -132,7 +132,7 @@ def create_or_edit_business_profile(request):
 @login_required
 def create_service_request(request):
     if request.method == 'POST':
-        form = ServiceRequestForm(request.POST)
+        form = ServiceRequestForm(request.POST, request.FILES)  # <-- Add request.FILES
         if form.is_valid():
             service_request = form.save(commit=False)
             service_request.user = request.user

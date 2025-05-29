@@ -86,12 +86,13 @@ class BusinessForm(forms.ModelForm):
 class ServiceRequestForm(forms.ModelForm):
     class Meta:
         model = ServiceRequest
-        fields = ['title', 'services_needed', 'location', 'description']
+        fields = ['title', 'services_needed', 'location', 'description', 'image']  # <-- Add 'image'
         widgets = {
             'services_needed': forms.CheckboxSelectMultiple(),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Service Title'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Location'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe your request'}),
+            'image': forms.ClearableFileInput(attrs={'accept': 'image/*'}),  # <-- Add widget for image
         }
 
     def clean_services_needed(self):

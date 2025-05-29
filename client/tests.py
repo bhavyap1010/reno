@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from .models import BusinessProfile, ServiceRequest, Chatroom, Message
 from django.urls import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 class ClientAppTests(TestCase):
     def setUp(self):
@@ -118,3 +119,25 @@ class ClientAppTests(TestCase):
 
         # Ensure the service request still exists
         self.assertTrue(ServiceRequest.objects.filter(id=request_id).exists())
+
+class ServiceRequestImageUploadTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+
+    def test_service_request_image_upload(self):
+        self.client.login(username='testuser', password='testpass')
+        image = SimpleUploadedFile(
+            name='test_image.jpg',
+            content=b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xFF\xFF\xFF\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x4C\x01\x00\x3B',
+            content_type='image/jpeg'
+        )
+        service_request = ServiceRequest.objects.create(
+            user=self.user,
+            title='Test Request',
+            services_needed=['cleaning'],
+            location='Test Location',
+            description='Test Description',
+            image=image
+        )
+        self.assertIsNotNone(service_request.image)
+        self.assertTrue(service_request.image.name.startswith('service_requests/'))

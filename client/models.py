@@ -55,6 +55,7 @@ class ServiceRequest(models.Model):
     )
     location = models.CharField(max_length=100, help_text="Where should the service be delivered?")
     description = models.TextField(help_text="Additional details about the request.")
+    image = models.ImageField(upload_to='service_requests/', blank=True, null=True)
 
     def __str__(self):
         return self.title
