@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
-from .models import BusinessProfile, ServiceRequest, Chatroom, Message
+from .models import BusinessProfile, ServiceRequest, Chatroom, Message, ServiceRequestImage
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -136,11 +136,14 @@ class ServiceRequestImageUploadTest(TestCase):
             title='Test Request',
             services_needed=['cleaning'],
             location='Test Location',
-            description='Test Description',
+            description='Test Description'
+        )
+        ServiceRequestImage.objects.create(
+            service_request=service_request,
             image=image
         )
-        self.assertIsNotNone(service_request.image)
-        self.assertTrue(service_request.image.name.startswith('service_requests/'))
+        self.assertEqual(service_request.images.count(), 1)
+        self.assertTrue(service_request.images.first().image.name.startswith('service_requests/'))
 
 class BusinessProfileImageUploadTest(TestCase):
     def setUp(self):
