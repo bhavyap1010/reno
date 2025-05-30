@@ -277,6 +277,7 @@ class ClientAppTests(TestCase):
         form = response.context["form"]
         self.assertTrue(any("too short" in msg.lower() for msg in form.errors.get("password1", [])))
         # Ensure the service request still exists
+        request_id = self.service_request.id
         self.assertTrue(ServiceRequest.objects.filter(id=request_id).exists())
 
 class ServiceRequestImageUploadTest(TestCase):
