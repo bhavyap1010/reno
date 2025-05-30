@@ -1,0 +1,30 @@
+{% extends "client/base.html" %}
+
+{% block content %}
+<div class="auth-center-wrapper">
+    <div class="form_wrapper">
+        {% if messages %}
+        <div class="messages" style="margin-bottom: 16px;">
+            <ul>
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="title_container">
+        <h2>Verify Your Email Address</h2>
+        </div>
+
+        <p style="margin-top: 16px;">
+        We have sent an email to you for verification. Follow the link provided to finalize the signup process.
+        If you do not see the verification email in your main inbox, check your spam folder. Please contact us
+        if you do not receive the verification email within a few minutes.
+        </p>
+        <div style="margin-top: 24px; text-align: center;">
+            <a href="{% url 'account_login' %}" class="register-button">Sign In</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

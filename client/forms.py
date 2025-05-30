@@ -1,71 +1,69 @@
 from django import forms
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Profile, BusinessProfile, ServiceRequest, Review
+from allauth.account.forms import SignupForm, LoginForm
 
-class SignUpForm(forms.ModelForm):
-    email = forms.EmailField(
-        required=True,
-        widget=forms.EmailInput(attrs={
-            'placeholder': 'Email'
-        })
-    )
-    password1 = forms.CharField(
-        widget=forms.PasswordInput(attrs={
-            'placeholder': 'Password'
-        })
-    )
-    password2 = forms.CharField(
-        widget=forms.PasswordInput(attrs={
-            'placeholder': 'Password Confirmation'
-        })
-    )
+class CustomSignupForm(SignupForm):
     account_type = forms.ChoiceField(
-        choices=[('', 'Select Account Type'), ('individual', 'Individual'), ('business', 'Business Owner')],
+        choices=[('individual', 'Individual'), ('business', 'Business')],
         required=True,
-        widget=forms.Select(attrs={
-            'class': 'select_option',
-        })
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
 
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'password1', 'password2', 'account_type')
-        widgets = {
-            'username': forms.TextInput(attrs={
-                'placeholder': 'Username',
-            })
-        }
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-            profile = Profile.objects.create(user=user, account_type=self.cleaned_data['account_type'])
+    def save(self, request):
+        user = super().save(request)
+        Profile.objects.create(
+            user=user,
+            account_type=self.cleaned_data['account_type']
+        )
         return user
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 != password2:
-            raise forms.ValidationError("Passwords don't match")
-        return password2
+class CustomLoginForm(LoginForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["login"].widget = forms.TextInput(
+            attrs={"placeholder": "Username or Email", "class": "form-control"}
+        )
+        self.fields["password"].widget.attrs.update({"class": "form-control"})
 
-class CustomAuthenticationForm(AuthenticationForm):
-    username = forms.CharField(
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Username',
-        })
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={
-            'placeholder': 'Password',
-        })
+    def clean(self):
+        # IMPORTANT: Call parent clean first to initialize internal allauth state
+        cleaned_data = super().clean()
+
+        login = self.cleaned_data.get("login")
+        password = self.cleaned_data.get("password")
+
+        # Authenticate by username or email
+        user = authenticate(self.request, username=login, password=password)
+
+        if user is None:
+            try:
+                user_obj = User.objects.get(email=login)
+                user = authenticate(self.request, username=user_obj.username, password=password)
+            except User.DoesNotExist:
+                pass
+
+        if user is None:
+            raise forms.ValidationError("Invalid login credentials.")
+
+        self.user = user
+        self.user_cache = user
+        return cleaned_data
+
+class PostSignupForm(forms.Form):
+    username = forms.CharField(max_length=150, required=True)
+    account_type = forms.ChoiceField(
+        choices=[('individual', 'Individual'), ('business', 'Business')],
+        required=True
     )
 
-class VerificationCodeForm(forms.Form):
-    code = forms.CharField(label='Code', max_length=6, widget=forms.TextInput(attrs={'placeholder': 'Enter verification code'}))
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username
 
 class BusinessForm(forms.ModelForm):
     class Meta:

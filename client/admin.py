@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from .models import Profile, BusinessProfile, ServiceRequest, Review, Chatroom, Message, ServiceRequestImage
-from .forms import SignUpForm
 
 # Inline Profile inside User
 class ProfileInline(admin.StackedInline):
@@ -12,7 +11,6 @@ class ProfileInline(admin.StackedInline):
 
 # Extend the User Admin
 class UserAdmin(BaseUserAdmin):
-    add_form = SignUpForm
     inlines = (ProfileInline,)
 
     fieldsets = (

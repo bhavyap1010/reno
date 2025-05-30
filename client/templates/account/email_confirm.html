@@ -1,0 +1,25 @@
+{% extends "client/base.html" %}
+
+{% block content %}
+<div class="auth-center-wrapper">
+  <div class="form_wrapper">
+    <div class="title_container">
+      <h2>Confirm Email</h2>
+    </div>
+
+    {% if confirmation %}
+      <p class="form-paragraph">
+        Please confirm that <a href="mailto:{{ confirmation.email_address.email }}">{{ confirmation.email_address.email }}</a>
+        is an email address for user {{ confirmation.email_address.user }}.
+      </p>
+
+      <form method="post" action="" style="margin-top: 20px;">
+        {% csrf_token %}
+        <input type="submit" value="Confirm" />
+      </form>
+    {% else %}
+      <p class="form-paragraph">This confirmation link has expired or is invalid.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
