@@ -2,6 +2,8 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
 
+# Middleware to ensure that users have an account type and username set (for when account is made via social app)
+
 class AccountTypeMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if not request.user.is_authenticated:
