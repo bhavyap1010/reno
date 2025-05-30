@@ -3,7 +3,6 @@ from . import views
 from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
-
     path("", views.home, name="home"),
     path("home/", views.home, name="home"),
     path("logout/", LogoutView.as_view(next_page="account_login"), name="logout-user"),
@@ -16,4 +15,5 @@ urlpatterns = [
     path("start-chat/", views.start_chat, name="chat-start"),  # assuming this view exists
     path('delete-request/<int:request_id>/', views.delete_service_request, name='delete-service-request'),
     path('choose-account-type/', views.choose_account_type_and_username, name='choose_account_type'),
+    path('service-request/<int:request_id>/', views.service_request_detail, name='service-request-detail'),
 ]

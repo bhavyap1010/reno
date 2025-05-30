@@ -39,4 +39,3 @@ coverage.xml
 
 # Static and media (optional, if these are built dynamically)
 staticfiles/
-media/

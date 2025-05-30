@@ -5,8 +5,9 @@ from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
 from django.urls import reverse
 from django.conf import settings
-from .models import BusinessProfile, ServiceRequest, Chatroom, Message, Profile
+from .models import BusinessProfile, ServiceRequest, Chatroom, Message, Profile, ServiceRequestImage
 import unittest
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 class ClientAppTests(TestCase):
     def setUp(self):
@@ -275,3 +276,51 @@ class ClientAppTests(TestCase):
         })
         form = response.context["form"]
         self.assertTrue(any("too short" in msg.lower() for msg in form.errors.get("password1", [])))
+        # Ensure the service request still exists
+        self.assertTrue(ServiceRequest.objects.filter(id=request_id).exists())
+
+class ServiceRequestImageUploadTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+
+    def test_service_request_image_upload(self):
+        self.client.login(username='testuser', password='testpass')
+        image = SimpleUploadedFile(
+            name='test_image.jpg',
+            content=b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xFF\xFF\xFF\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x4C\x01\x00\x3B',
+            content_type='image/jpeg'
+        )
+        service_request = ServiceRequest.objects.create(
+            user=self.user,
+            title='Test Request',
+            services_needed=['cleaning'],
+            location='Test Location',
+            description='Test Description'
+        )
+        ServiceRequestImage.objects.create(
+            service_request=service_request,
+            image=image
+        )
+        self.assertEqual(service_request.images.count(), 1)
+        self.assertTrue(service_request.images.first().image.name.startswith('service_requests/'))
+
+class BusinessProfileImageUploadTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='bizuser', password='testpass')
+
+    def test_business_profile_image_upload(self):
+        self.client.login(username='bizuser', password='testpass')
+        image = SimpleUploadedFile(
+            name='biz_image.jpg',
+            content=b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xFF\xFF\xFF\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x4C\x01\x00\x3B',
+            content_type='image/jpeg'
+        )
+        profile = BusinessProfile.objects.create(
+            user=self.user,
+            name='Biz Name',
+            services=['cleaning'],
+            service_location='Biz Location',
+            image=image
+        )
+        self.assertIsNotNone(profile.image)
+        self.assertTrue(profile.image.name.startswith('business_profiles/'))

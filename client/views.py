@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.models import User
 from .forms import BusinessForm, ServiceRequestForm, ReviewForm, PostSignupForm
-from .models import Profile, BusinessProfile, ServiceRequest, Chatroom, Message
+from .models import Profile, BusinessProfile, ServiceRequest, Chatroom, Message, ServiceRequestImage
 from django.contrib.auth.decorators import login_required
 import json
 import secrets
@@ -45,7 +45,7 @@ def create_or_edit_business_profile(request):
     profile, created = BusinessProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
-        form = BusinessForm(request.POST, instance=profile)
+        form = BusinessForm(request.POST, request.FILES, instance=profile)  # <-- Add request.FILES
         if form.is_valid():
             form.save()
             return redirect('home')
@@ -57,11 +57,17 @@ def create_or_edit_business_profile(request):
 @login_required
 def create_service_request(request):
     if request.method == 'POST':
-        form = ServiceRequestForm(request.POST)
+        form = ServiceRequestForm(request.POST, request.FILES)
         if form.is_valid():
             service_request = form.save(commit=False)
             service_request.user = request.user
             service_request.save()
+
+            # Save multiple images
+            files = request.FILES.getlist('images')
+            for f in files:
+                ServiceRequestImage.objects.create(service_request=service_request, image=f)
+
             return redirect('home')
     else:
         form = ServiceRequestForm()
@@ -261,3 +267,11 @@ def choose_account_type_and_username(request):
 
     return render(request, 'client/choose_account_type_and_username.html', {'form': form})
 
+def service_request_detail(request, request_id):
+    service_request = get_object_or_404(ServiceRequest, id=request_id)
+    images = service_request.images.all()
+    print(images)
+    return render(request, 'client/service_request_detail.html', {
+        'service_request': service_request,
+        'images': images
+    })

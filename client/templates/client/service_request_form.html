@@ -16,7 +16,7 @@
       <h2>Request a Service</h2>
     </div>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
       <div class="input_field">
@@ -49,6 +49,12 @@
       <div class="input_field textarea_field">
         <span><i class="fas fa-align-left"></i></span>
         {{ form.description }}
+      </div>
+
+      <div class="input_field">
+        <span><i class="fas fa-image"></i></span>
+        <input type="file" name="images" required multiple accept="image/*">
+        <div style="font-size:12px;color:#888;">You can upload up to 5 images.</div>
       </div>
 
       <input type="submit" value="Submit Request">
