@@ -9,7 +9,8 @@ import secrets
 from django.http import JsonResponse as jsonresponse, HttpResponseBadRequest as httpresponsebadrequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse  # <-- Add this import if not already present
 
 from django.shortcuts import render, redirect
 from .models import BusinessProfile, ServiceRequest
@@ -275,3 +276,19 @@ def service_request_detail(request, request_id):
         'service_request': service_request,
         'images': images
     })
+
+@require_POST
+@login_required
+def delete_message(request):
+    try:
+        data = json.loads(request.body)
+        message_id = data.get('message_id')
+        from .models import Message
+        message = Message.objects.get(id=message_id)
+        if message.sender != request.user:
+            return JsonResponse({'error': 'Not allowed'}, status=403)
+        message.deleted = True
+        message.save()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)

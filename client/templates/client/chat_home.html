@@ -44,14 +44,18 @@
 
             <div class="chat__item__container" id="id_chat_item_container">
                 {% for message in messages %}
+                {% if not message.deleted %}
                 <div
-                    class="chat-message {% if message.sender.username == request.user.username %}self{% else %}other{% endif %}">
+                    class="chat-message {% if message.sender.username == request.user.username %}self{% else %}other{% endif %}"
+                    data-message-id="{{ message.id }}">
                     {% if message.sender.username != request.user.username %}
                     <strong>{{ message.sender.username }}</strong>: {{ message.content }}
                     {% else %}
                     {{ message.content }} <strong>{{ message.sender.username }}</strong>
+                    <button class="delete-message-btn" data-message-id="{{ message.id }}" style="margin-left:8px; background:none; border:none; color:#888; cursor:pointer;" title="Delete">&times;</button>
                     {% endif %}
                 </div>
+                {% endif %}
                 {% endfor %}
             </div>
             <div class="chat-input-container">
@@ -74,6 +78,7 @@
                 document.querySelector("#id_message_send_button").onclick = function () {
                     const messageInput = document.querySelector("#id_message_send_input");
                     const message = messageInput.value;
+                    if (!message.trim()) return;
                     const currentTime = new Date().toLocaleTimeString();
 
                     chatSocket.send(JSON.stringify({
@@ -86,15 +91,46 @@
                 chatSocket.onmessage = function (e) {
                     const data = JSON.parse(e.data);
                     const container = document.querySelector("#id_chat_item_container");
+                    if (data.action === "delete") {
+                        // Remove the message div
+                        const msgDiv = container.querySelector(`[data-message-id='${data.message_id}']`);
+                        if (msgDiv) msgDiv.remove();
+                        return;
+                    }
+                    // Add new message
                     const div = document.createElement("div");
                     div.className = `chat-message ${data.username === "{{ request.user.username }}" ? "self" : "other"}`;
-                    div.innerHTML = data.username === "{{ request.user.username }}"
-                        ? `${data.message} <strong>${data.username}</strong>`
-                        : `<strong>${data.username}</strong>: ${data.message}`;
+                    div.setAttribute("data-message-id", data.message_id);
+                    if (data.username === "{{ request.user.username }}") {
+                        div.innerHTML = `${data.message} <strong>${data.username}</strong> <button class="delete-message-btn" data-message-id="${data.message_id}" style="margin-left:8px; background:none; border:none; color:#888; cursor:pointer;" title="Delete">&times;</button>`;
+                    } else {
+                        div.innerHTML = `<strong>${data.username}</strong>: ${data.message}`;
+                    }
                     container.appendChild(div);
                     container.scrollTop = container.scrollHeight;
                     document.querySelector("#id_message_send_input").value = "";
                 };
+
+                // Delegate delete button click
+                document.getElementById("id_chat_item_container").addEventListener("click", function (e) {
+                    if (e.target.classList.contains("delete-message-btn")) {
+                        const messageId = e.target.getAttribute("data-message-id");
+                        // Send delete action via websocket
+                        chatSocket.send(JSON.stringify({
+                            action: "delete",
+                            message_id: messageId
+                        }));
+                        // Optionally, also send to backend for audit/logging
+                        fetch("{% url 'delete-message' %}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": "{{ csrf_token }}"
+                            },
+                            body: JSON.stringify({ message_id: messageId })
+                        });
+                    }
+                });
 
                 const sidebarToggle = document.getElementById("sidebarToggle");
                 const chatSidebar = document.getElementById("chatSidebar");

@@ -24,6 +24,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
+        if data.get("action") == "delete":
+            message_id = data.get("message_id")
+            sender = self.scope['user']
+            result = await self.delete_message(message_id, sender)
+            if result:
+                await self.channel_layer.group_send(
+                    self.room_group_name, {
+                        "type": "deleteMessage",
+                        "message_id": message_id,
+                    }
+                )
+            return
+
         message = data["message"]
         username = data["username"]
         time = data["time"]
@@ -32,17 +45,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sender = self.scope['user']
 
         if room:
-            await self.save_message(room, sender, message)
+            msg_obj = await self.save_message(room, sender, message)
+            message_id = msg_obj.id if msg_obj else None
         else:
-            # Optionally: log missing room
             print(f"[ERROR] Chatroom '{self.room_name}' not found — message not saved.")
+            message_id = None
 
         await self.channel_layer.group_send(
             self.room_group_name, {
                 "type": "sendMessage",
                 "message": message,
                 "username": username,
-                "time": time
+                "time": time,
+                "message_id": message_id,
             }
         )
 
@@ -50,7 +65,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "message": event["message"],
             "username": event["username"],
-            "time": event["time"]
+            "time": event["time"],
+            "message_id": event.get("message_id"),
+        }))
+
+    async def deleteMessage(self, event):
+        await self.send(text_data=json.dumps({
+            "action": "delete",
+            "message_id": event["message_id"],
         }))
 
     @database_sync_to_async
@@ -60,3 +82,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_message(self, room, sender, content):
         return Message.objects.create(room=room, sender=sender, content=content)
+
+    @database_sync_to_async
+    def delete_message(self, message_id, sender):
+        from .models import Message
+        try:
+            msg = Message.objects.get(id=message_id, sender=sender)
+            msg.deleted = True
+            msg.save()
+            return True
+        except Message.DoesNotExist:
+            return False

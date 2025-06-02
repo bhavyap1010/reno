@@ -16,4 +16,5 @@ urlpatterns = [
     path('delete-request/<int:request_id>/', views.delete_service_request, name='delete-service-request'),
     path('choose-account-type/', views.choose_account_type_and_username, name='choose_account_type'),
     path('service-request/<int:request_id>/', views.service_request_detail, name='service-request-detail'),
+    path('delete-message/', views.delete_message, name='delete-message'),
 ]

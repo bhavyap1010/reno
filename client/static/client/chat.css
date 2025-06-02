@@ -303,6 +303,22 @@ body {
     cursor: not-allowed;
 }
 
+/* Delete message button */
+.delete-message-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 18px;
+    margin-left: 6px;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: color 0.2s;
+}
+
+.delete-message-btn:hover {
+    color: #e74c3c;
+}
+
 /* Scrollbar styling */
 .chat-sidebar::-webkit-scrollbar,
 .chat__item__container::-webkit-scrollbar {
