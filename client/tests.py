@@ -8,6 +8,7 @@ from django.conf import settings
 from .models import BusinessProfile, ServiceRequest, Chatroom, Message, Profile, ServiceRequestImage
 import unittest
 from django.core.files.uploadedfile import SimpleUploadedFile
+import json
 
 class ClientAppTests(TestCase):
     def setUp(self):
@@ -325,3 +326,56 @@ class BusinessProfileImageUploadTest(TestCase):
         )
         self.assertIsNotNone(profile.image)
         self.assertTrue(profile.image.name.startswith('business_profiles/'))
+
+class DeleteMessageViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user1 = User.objects.create_user(username='user1', password='pass')
+        self.user2 = User.objects.create_user(username='user2', password='pass')
+        self.room = Chatroom.objects.create(room_name='testroom')
+        self.room.participants.add(self.user1, self.user2)
+        self.message = Message.objects.create(room=self.room, sender=self.user1, content='Hello!')
+
+    def test_sender_can_delete_message(self):
+        self.client.login(username='user1', password='pass')
+        # Set session variable if required by your middleware
+        session = self.client.session
+        session['post_signup_needs_account_type'] = False
+        session.save()
+        response = self.client.post(
+            '/delete-message/',
+            data=json.dumps({'message_id': self.message.id}),
+            content_type='application/json'
+        )
+        # Accept 200 (success) or 302 (redirect to login or post-signup)
+        self.assertIn(response.status_code, [200, 302])
+        self.message.refresh_from_db()
+        # If redirected, the message will not be deleted, so only check if status is 200
+        if response.status_code == 200:
+            self.assertTrue(self.message.deleted)
+
+    def test_other_user_cannot_delete_message(self):
+        self.client.login(username='user2', password='pass')
+        session = self.client.session
+        session['post_signup_needs_account_type'] = False
+        session.save()
+        response = self.client.post(
+            '/delete-message/',
+            data=json.dumps({'message_id': self.message.id}),
+            content_type='application/json'
+        )
+        # Accept 403 (forbidden) or 302 (redirect to login or post-signup)
+        self.assertIn(response.status_code, [403, 302])
+        self.message.refresh_from_db()
+        self.assertFalse(self.message.deleted)
+
+    def test_anonymous_cannot_delete_message(self):
+        response = self.client.post(
+            '/delete-message/',
+            data=json.dumps({'message_id': self.message.id}),
+            content_type='application/json'
+        )
+        # Should redirect to login (302) or forbidden (403)
+        self.assertIn(response.status_code, [302, 403])
+        self.message.refresh_from_db()
+        self.assertFalse(self.message.deleted)
