@@ -254,8 +254,6 @@ def chat_home(request, room_name=None):
 
     return render(request, 'client/chat_home.html', context)
 
-
-
 @csrf_exempt  # Allow POST requests without CSRF token for debugging
 @login_required
 def start_chat(request):
@@ -352,4 +350,4 @@ def delete_message(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 def terms_and_conditions(request):
-    return render(request, 'terms_and_conditions.html')
+    return render(request, 'client/terms_and_conditions.html')
