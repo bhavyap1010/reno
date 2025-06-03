@@ -61,6 +61,7 @@ def create_or_edit_business_profile(request):
 
 @login_required
 def create_service_request(request):
+    available_services = [s[0] for s in SERVICE_CHOICES]
     if request.method == 'POST':
         form = ServiceRequestForm(request.POST, request.FILES)
         if form.is_valid():
@@ -76,7 +77,17 @@ def create_service_request(request):
             return redirect('home')
     else:
         form = ServiceRequestForm()
-    return render(request, 'client/service_request_form.html', {'form': form})
+    # Pass initial selected services for edit (if needed)
+    selected_services = list(form.instance.services_needed) if hasattr(form.instance, 'services_needed') else []
+    return render(
+        request,
+        'client/service_request_form.html',
+        {
+            'form': form,
+            'available_services': available_services,
+            'selected_services': selected_services,
+        }
+    )
 
 @login_required
 def delete_service_request(request, request_id):

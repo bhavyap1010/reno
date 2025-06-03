@@ -16,7 +16,7 @@
       <h2>Request a Service</h2>
     </div>
 
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" id="serviceRequestForm">
       {% csrf_token %}
 
       <div class="input_field">
@@ -24,14 +24,12 @@
         {{ form.title }}
       </div>
 
-      <div class="bubble_field">
-        <div class="bubble-group">
-          {% for checkbox in form.services_needed %}
-            {{ checkbox.tag }}
-            <label for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
-          {% endfor %}
-        </div>
-
+      <div class="input_field">
+        <label for="service-search">Needed Services</label>
+        <input type="text" id="service-search" placeholder="Type to search services..." autocomplete="off" style="width:200px;">
+        <div id="service-suggestions" style="border:1px solid #ccc; background:#fff; position:absolute; z-index:10; display:none; max-height:120px; overflow-y:auto;"></div>
+        <div id="selected-services" style="margin:8px 0;"></div>
+        <!-- Hidden inputs for selected services will be appended here -->
         {% if form.services_needed.errors %}
           <div class="form_error">
             {% for error in form.services_needed.errors %}
@@ -63,5 +61,93 @@
       <a href="{% url 'home' %}" class="register-button">Return Home</a>
     </div>
   </div>
+  {{ available_services|json_script:"available-services-data" }}
+  {{ selected_services|json_script:"selected-services-data" }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const availableServices = JSON.parse(document.getElementById('available-services-data').textContent);
+      let initialSelected = [];
+      const selectedData = document.getElementById('selected-services-data');
+      if (selectedData) {
+        initialSelected = JSON.parse(selectedData.textContent);
+      }
+      const selectedServices = new Set(initialSelected);
+
+      const serviceInput = document.getElementById('service-search');
+      const suggestionsBox = document.getElementById('service-suggestions');
+      const selectedBox = document.getElementById('selected-services');
+      const form = document.getElementById('serviceRequestForm');
+
+      function renderSelectedServices() {
+        selectedBox.innerHTML = '';
+        // Remove old hidden inputs
+        form.querySelectorAll('input[name="services_needed"]').forEach(e => e.remove());
+        selectedServices.forEach(service => {
+          // Tag
+          const tag = document.createElement('span');
+          tag.style.cssText = 'display:inline-block;background:#e0e7ff;color:#1e40af;border-radius:12px;padding:2px 10px;margin:2px 4px 2px 0;font-size:0.95em;';
+          tag.textContent = service.charAt(0).toUpperCase() + service.slice(1);
+          // Remove button
+          const remove = document.createElement('span');
+          remove.style.cssText = 'margin-left:6px;color:#888;cursor:pointer;font-weight:bold;';
+          remove.textContent = '×';
+          remove.onclick = () => {
+            selectedServices.delete(service);
+            renderSelectedServices();
+          };
+          tag.appendChild(remove);
+          selectedBox.appendChild(tag);
+          // Hidden input
+          const hidden = document.createElement('input');
+          hidden.type = 'hidden';
+          hidden.name = 'services_needed';
+          hidden.value = service;
+          form.appendChild(hidden);
+        });
+      }
+      renderSelectedServices();
+
+      if (serviceInput) {
+        serviceInput.addEventListener('input', function() {
+          const val = this.value.trim().toLowerCase();
+          suggestionsBox.innerHTML = '';
+          if (!val) {
+            suggestionsBox.style.display = 'none';
+            return;
+          }
+          const matches = availableServices.filter(s => s.toLowerCase().includes(val) && !selectedServices.has(s));
+          if (matches.length === 0) {
+            suggestionsBox.style.display = 'none';
+            return;
+          }
+          matches.forEach(service => {
+            const item = document.createElement('div');
+            item.style.cssText = 'padding:4px 8px;cursor:pointer;';
+            item.textContent = service.charAt(0).toUpperCase() + service.slice(1);
+            item.onclick = () => {
+              selectedServices.add(service);
+              renderSelectedServices();
+              serviceInput.value = '';
+              suggestionsBox.style.display = 'none';
+            };
+            suggestionsBox.appendChild(item);
+          });
+          suggestionsBox.style.display = 'block';
+        });
+
+        serviceInput.addEventListener('blur', function() {
+          setTimeout(() => { suggestionsBox.style.display = 'none'; }, 100);
+        });
+
+        serviceInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const first = suggestionsBox.querySelector('div');
+            if (first) first.click();
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
