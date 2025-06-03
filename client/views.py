@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.models import User
 from .forms import BusinessForm, ServiceRequestForm, ReviewForm, PostSignupForm
-from .models import Profile, BusinessProfile, ServiceRequest, Chatroom, Message, ServiceRequestImage
+from .models import Profile, BusinessProfile, ServiceRequest, Chatroom, Message, ServiceRequestImage, SERVICE_CHOICES
 from django.contrib.auth.decorators import login_required
 import json
 import secrets
@@ -34,9 +34,12 @@ def home(request):
         for service in services:
             service_requests = service_requests.filter(services_needed__icontains=service)
 
+    available_services = [s[0] for s in SERVICE_CHOICES]
+
     context = {
         'businesses': businesses,
-        'service_requests': service_requests
+        'service_requests': service_requests,
+        'available_services': available_services,
     }
 
     return render(request, 'client/home.html', context)
@@ -44,6 +47,7 @@ def home(request):
 @login_required
 def create_or_edit_business_profile(request):
     profile, created = BusinessProfile.objects.get_or_create(user=request.user)
+    available_services = [s[0] for s in SERVICE_CHOICES]
 
     if request.method == 'POST':
         form = BusinessForm(request.POST, request.FILES, instance=profile)  # <-- Add request.FILES
@@ -53,7 +57,7 @@ def create_or_edit_business_profile(request):
     else:
         form = BusinessForm(instance=profile)
 
-    return render(request, 'client/business_form.html', {'form': form})
+    return render(request, 'client/business_form.html', {'form': form, 'available_services': available_services})
 
 @login_required
 def create_service_request(request):

@@ -118,6 +118,14 @@
     {% endfor %}
 </div>
 
+{{ available_services|json_script:"available-services-data" }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const availableServices = JSON.parse(document.getElementById('available-services-data').textContent);
+    // ...existing code...
+});
+</script>
+
 <script>
     function toggleSidebar() {
         const overlay = document.getElementById("sidebarOverlay");
