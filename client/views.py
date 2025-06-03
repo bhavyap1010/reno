@@ -178,13 +178,23 @@ def chat_home(request, room_name=None):
     rooms_with_users = []
     for room in Chatrooms:
         other_user = room.participants.exclude(id=request.user.id).first()
-        if other_user and room.room_name:
-            rooms_with_users.append((room, other_user))
+        # If the other user is a business, show their business name
+        if other_user:
+            if hasattr(other_user, "profile") and other_user.profile.account_type == "business":
+                try:
+                    business_profile = other_user.business_profile
+                    display_name = business_profile.name
+                except BusinessProfile.DoesNotExist:
+                    display_name = other_user.username
+            else:
+                display_name = other_user.username
+            rooms_with_users.append((room, display_name))
 
     # load the current room and messages (if selected)
     messages = []
     other_user = None
     selected_room = None
+    other_user_display_name = ''
 
     if room_name:
         selected_room = get_object_or_404(Chatrooms, room_name=room_name)
@@ -194,13 +204,37 @@ def chat_home(request, room_name=None):
 
         messages = selected_room.messages.select_related('sender').order_by('timestamp')
         other_user = selected_room.participants.exclude(id=request.user.id).first()
+        # Show business name if other user is a business
+        if other_user and hasattr(other_user, "profile") and other_user.profile.account_type == "business":
+            try:
+                other_user_display_name = other_user.business_profile.name
+            except BusinessProfile.DoesNotExist:
+                other_user_display_name = other_user.username
+        elif other_user:
+            other_user_display_name = other_user.username
+
+        # Attach avatar_url to each message
+        for msg in messages:
+            sender = msg.sender
+            avatar_url = None
+            if hasattr(sender, "profile") and sender.profile.account_type == "business":
+                try:
+                    business_profile = sender.business_profile
+                    if business_profile.image and hasattr(business_profile.image, 'url'):
+                        avatar_url = business_profile.image.url
+                except BusinessProfile.DoesNotExist:
+                    avatar_url = None
+            # Default avatar if not business or no image
+            if not avatar_url:
+                avatar_url = '/static/client/images/profile_default_picture.jpg'
+            msg.avatar_url = avatar_url
 
     context = {
         'rooms_with_users': rooms_with_users,
         'room_name': selected_room.room_name if selected_room else '',
         'messages': messages,
         'username': request.user.username,
-        'other_user': other_user.username if other_user else '',
+        'other_user': other_user_display_name,
     }
 
     return render(request, 'client/chat_home.html', context)
@@ -229,7 +263,16 @@ def start_chat(request):
                 room = Chatroom.objects.create(room_name=secrets.token_hex(8))
                 room.participants.add(current_user, other_user)
 
-            return jsonresponse({'room_name': room.room_name})
+            # If the other user is a business, return their business name
+            if hasattr(other_user, "profile") and other_user.profile.account_type == "business":
+                try:
+                    business_name = other_user.business_profile.name
+                except BusinessProfile.DoesNotExist:
+                    business_name = other_user.username
+            else:
+                business_name = other_user.username
+
+            return jsonresponse({'room_name': room.room_name, 'other_user_display': business_name})
         except Exception as e:
             return jsonresponse({'error': str(e)}, status=500)
     else:

@@ -211,7 +211,9 @@ class ClientAppTests(TestCase):
         chatroom.participants.add(self.user1, self.user2)
         response = self.client.get(reverse("chat-home", args=["testroom"]))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "User2")
+        # The sidebar and header should now show the business name, not the username
+        self.assertContains(response, "Test Business")
+        self.assertNotContains(response, "User2")
 
     def test_prevent_chat_with_self(self):
         self.client.login(username="user1", password="password1")
@@ -379,3 +381,88 @@ class DeleteMessageViewTest(TestCase):
         self.assertIn(response.status_code, [302, 403])
         self.message.refresh_from_db()
         self.assertFalse(self.message.deleted)
+
+class BusinessChatIdentityTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        # Create a business user and profile
+        self.business_user = User.objects.create_user(username='bizuser', password='bizpass')
+        Profile.objects.create(user=self.business_user, account_type='business')
+        self.business_profile = BusinessProfile.objects.create(
+            user=self.business_user,
+            name='Biz Name',
+            services=['cleaning'],
+            service_location='Biz Location'
+        )
+        # Create a regular user
+        self.regular_user = User.objects.create_user(username='regular', password='regpass')
+        Profile.objects.create(user=self.regular_user, account_type='individual')
+
+    def test_start_chat_with_business_shows_business_name(self):
+        self.client.login(username='regular', password='regpass')
+        # Start chat with business user
+        response = self.client.post(
+            '/start-chat/',
+            data=json.dumps({'other_user': 'bizuser'}),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        # The response should contain the business name as 'other_user_display'
+        self.assertIn('other_user_display', data)
+        self.assertEqual(data['other_user_display'], 'Biz Name')
+
+    def test_chat_home_business_name_in_sidebar(self):
+        # Create chatroom and add both users
+        chatroom = Chatroom.objects.create(room_name='room-biz')
+        chatroom.participants.add(self.business_user, self.regular_user)
+        self.client.login(username='regular', password='regpass')
+        response = self.client.get(f'/chats/{chatroom.room_name}/')
+        # Business name should appear in the chat header or sidebar
+        self.assertContains(response, 'Biz Name')
+        self.assertNotContains(response, 'bizuser')
+
+class BusinessToBusinessAvatarTest(TestCase):
+    def setUp(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        self.client = Client()
+        # Create business user 1 with profile picture
+        self.biz1 = User.objects.create_user(username='biz1', password='pass1')
+        Profile.objects.create(user=self.biz1, account_type='business')
+        self.biz1_profile = BusinessProfile.objects.create(
+            user=self.biz1,
+            name='Biz One',
+            services=['cleaning'],
+            service_location='Loc1',
+            image=SimpleUploadedFile(
+                name='biz1.jpg',
+                content=b'filecontent1',
+                content_type='image/jpeg'
+            )
+        )
+        # Create business user 2 with profile picture
+        self.biz2 = User.objects.create_user(username='biz2', password='pass2')
+        Profile.objects.create(user=self.biz2, account_type='business')
+        self.biz2_profile = BusinessProfile.objects.create(
+            user=self.biz2,
+            name='Biz Two',
+            services=['plumbing'],
+            service_location='Loc2',
+            image=SimpleUploadedFile(
+                name='biz2.jpg',
+                content=b'filecontent2',
+                content_type='image/jpeg'
+            )
+        )
+        # Create chatroom and messages
+        self.room = Chatroom.objects.create(room_name='biz2biz')
+        self.room.participants.add(self.biz1, self.biz2)
+        self.msg1 = Message.objects.create(room=self.room, sender=self.biz1, content='Hello from Biz1')
+        self.msg2 = Message.objects.create(room=self.room, sender=self.biz2, content='Hello from Biz2')
+
+    def test_both_business_avatars_displayed(self):
+        self.client.login(username='biz1', password='pass1')
+        response = self.client.get(f'/chats/{self.room.room_name}/')
+        # Check both business profile images are present in the HTML
+        self.assertIn(self.biz1_profile.image.url, response.content.decode())
+        self.assertIn(self.biz2_profile.image.url, response.content.decode())
