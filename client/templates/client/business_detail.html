@@ -21,6 +21,14 @@
         <h2 style="color: red;">{{ business.name }}</h2>
         <p>Services: {{ business.services }}</p>
         <p>Location: {{ business.service_location }}</p>
+        <p>
+            <strong>Status:</strong>
+            {% if business.status == 'available' %}
+                <span style="color:green;">Available</span>
+            {% else %}
+                <span style="color:red;">Busy</span>
+            {% endif %}
+        </p>
 
         <h3>Reviews</h3>
         <ul>

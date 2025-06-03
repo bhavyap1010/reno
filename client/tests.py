@@ -466,3 +466,28 @@ class BusinessToBusinessAvatarTest(TestCase):
         # Check both business profile images are present in the HTML
         self.assertIn(self.biz1_profile.image.url, response.content.decode())
         self.assertIn(self.biz2_profile.image.url, response.content.decode())
+
+class BusinessStatusDisplayTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='biz', password='pass')
+        Profile.objects.create(user=self.user, account_type='business')
+        self.business = BusinessProfile.objects.create(
+            user=self.user,
+            name='Biz Name',
+            services=['cleaning'],
+            service_location='Loc',
+            status='busy'
+        )
+
+    def test_status_display_on_business_detail(self):
+        response = self.client.get(f'/business/{self.business.id}/')
+        self.assertContains(response, 'Busy')
+        self.assertNotContains(response, 'Available')
+
+    def test_status_display_on_business_list(self):
+        self.client.login(username='biz', password='pass')
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Busy')
+        self.assertNotContains(response, 'Available')

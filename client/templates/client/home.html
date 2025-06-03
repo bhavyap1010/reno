@@ -75,6 +75,14 @@
         <h3><a href="{% url 'business-detail' business.id %}">{{ business.name }}</a></h3>
         <p><strong>Services:</strong> {{ business.services }}</p>
         <p><strong>Location:</strong> {{ business.service_location }}</p>
+        <p>
+            <strong>Status:</strong>
+            {% if business.status == 'available' %}
+                <span style="color:green;">Available</span>
+            {% else %}
+                <span style="color:red;">Busy</span>
+            {% endif %}
+        </p>
         <a href="{% url 'write-review' business.id %}" class="card-button">Write a Review</a>
     </div>
     {% empty %}

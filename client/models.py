@@ -37,6 +37,16 @@ class BusinessProfile(models.Model):
     )
     service_location = models.CharField(max_length=255, help_text="Where is your business based?")
     image = models.ImageField(upload_to='business_profiles/', blank=True, null=True)
+    STATUS_CHOICES = [
+        ('available', 'Available'),
+        ('busy', 'Busy'),
+    ]
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='available',
+        help_text="Set your current business status."
+    )
 
     def __str__(self):
         return self.name

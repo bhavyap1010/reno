@@ -68,7 +68,7 @@ class PostSignupForm(forms.Form):
 class BusinessForm(forms.ModelForm):
     class Meta:
         model = BusinessProfile
-        fields = ['name', 'services', 'service_location', 'image']  # <-- Add 'image'
+        fields = ['name', 'services', 'service_location', 'image', 'status']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Business Name'}),
             'services': forms.CheckboxSelectMultiple(),

@@ -18,40 +18,8 @@
 
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
-
-      <div class="input_field">
-        <span><i class="fas fa-briefcase"></i></span>
-        {{ form.name }}
-      </div>
-
-      <div class="bubble_field">
-        <div class="bubble-group">
-          {% for checkbox in form.services %}
-            {{ checkbox.tag }}
-            <label for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
-          {% endfor %}
-        </div>
-
-        {% if form.services.errors %}
-          <div class="form_error">
-            {% for error in form.services.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-
-      <div class="input_field">
-        <span><i class="fas fa-location-dot"></i></span>
-        {{ form.service_location }}
-      </div>
-
-      <div class="input_field">
-        <span><i class="fas fa-image"></i></span>
-        {{ form.image }}
-      </div>
-
-      <input type="submit" value="Save">
+      {{ form.as_p }}
+      <button type="submit">Save</button>
     </form>
     <div class="link_container" style="text-align:center; margin-top:10px;">
       <a href="{% url 'home' %}" class="register-button">Return Home</a>
