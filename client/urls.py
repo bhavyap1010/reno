@@ -17,4 +17,5 @@ urlpatterns = [
     path('choose-account-type/', views.choose_account_type_and_username, name='choose_account_type'),
     path('service-request/<int:request_id>/', views.service_request_detail, name='service-request-detail'),
     path('delete-message/', views.delete_message, name='delete-message'),
+    path('terms/', views.terms_and_conditions, name='terms_and_conditions'),  # <-- Add this line
 ]

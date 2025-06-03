@@ -335,3 +335,6 @@ def delete_message(request):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+def terms_and_conditions(request):
+    return render(request, 'terms_and_conditions.html')
