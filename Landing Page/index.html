@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProConnect - Find Available Contractors Instantly | Home Services Platform</title>
+    <meta name="description" content="ProConnect - The smart way to find and hire trusted home service professionals. Real-time availability, instant quotes, and quality guaranteed. Better than HomeStars.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            border: 1px solid #dbeafe;
+            color: #2563eb;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: #eff6ff;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #faf5ff 100%);
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 24px;
+            line-height: 1.1;
+        }
+
+        .hero .highlight {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: #6b7280;
+            margin-bottom: 32px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f3f4f6;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Services Grid */
+        .services {
+            padding: 64px 0;
+            background: white;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: #6b7280;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 24px;
+        }
+
+        .service-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #f3f4f6;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .service-card h3 {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .availability {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+        }
+
+        .available-text {
+            font-size: 14px;
+            color: #10b981;
+        }
+
+        .price {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 64px 0;
+            background: linear-gradient(135deg, #f9fafb, #eff6ff);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #f3f4f6;
+            text-align: center;
+            transition: box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            color: white;
+        }
+
+        /* Contractors Section */
+        .contractors {
+            padding: 64px 0;
+            background: white;
+        }
+
+        .contractors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .contractor-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #f3f4f6;
+            transition: box-shadow 0.3s;
+        }
+
+        .contractor-card:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .contractor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .contractor-info h3 {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .contractor-specialty {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-available {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-busy {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .star {
+            color: #fbbf24;
+        }
+
+        .rating-text {
+            font-weight: 600;
+        }
+
+        .reviews-text {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .contractor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .response-time {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .contractor-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 64px 0;
+            background: linear-gradient(135deg, #faf5ff, #eff6ff);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-number {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .step h3 {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .step p {
+            color: #6b7280;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 64px 0;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            text-align: center;
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .cta p {
+            font-size: 20px;
+            color: #dbeafe;
+            margin-bottom: 32px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: white;
+            color: #2563eb;
+        }
+
+        .btn-white:hover {
+            background: #f9fafb;
+        }
+
+        .btn-outline-white {
+            border: 1px solid white;
+            color: white;
+            background: transparent;
+        }
+
+        .btn-outline-white:hover {
+            background: white;
+            color: #2563eb;
+        }
+
+        /* Footer */
+        footer {
+            background: #111827;
+            color: white;
+            padding: 48px 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .footer-section h3 {
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-section ul li a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+        }
+
+        .footer-brand p {
+            color: #9ca3af;
+            margin-bottom: 16px;
+        }
+
+        .quality-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #9ca3af;
+        }
+
+        .checkmark {
+            color: #10b981;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 32px;
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-input {
+                min-width: auto;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">
+                    <div class="logo-icon">P</div>
+                    <span class="logo-text">ProConnect</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#services">Services</a>
+                    <a href="#how-it-works">How it Works</a>
+                    <a href="#contractors">Join as Pro</a>
+                    <a href="#" class="btn btn-outline">Sign In</a>
+                    <a href="#" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Find <span class="highlight">Available</span><br>Contractors Instantly</h1>
+            <p>The only platform that shows real-time contractor availability with instant quotes. 
+               Book same-day service or schedule ahead with confidence.</p>
+            
+            <div class="search-container">
+                <form class="search-form">
+                    <input type="text" class="search-input" placeholder="What service do you need?">
+                    <input type="text" class="search-input" placeholder="Your location">
+                    <button type="submit" class="btn btn-primary">Find Pros</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Popular Services</h2>
+                <p>See live availability and get instant quotes</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🔧</div>
+                    <h3>Plumbing</h3>
+                    <div class="availability">
+                        <div class="status-dot"></div>
+                        <span class="available-text">23 available</span>
+                    </div>
+                    <p class="price">From $89</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">⚡</div>
+                    <h3>Electrical</h3>
+                    <div class="availability">
+                        <div class="status-dot"></div>
+                        <span class="available-text">18 available</span>
+                    </div>
+                    <p class="price">From $112</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">❄️</div>
+                    <h3>HVAC</h3>
+                    <div class="availability">
+                        <div class="status-dot"></div>
+                        <span class="available-text">15 available</span>
+                    </div>
+                    <p class="price">From $156</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🧹</div>
+                    <h3>Cleaning</h3>
+                    <div class="availability">
+                        <div class="status-dot"></div>
+                        <span class="available-text">45 available</span>
+                    </div>
+                    <p class="price">From $65</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🌱</div>
+                    <h3>Landscaping</h3>
+                    <div class="availability">
+                        <div class="status-dot"></div>
+                        <span class="available-text">32 available</span>
+                    </div>
+                    <p class="price">From $98</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🏠</div>
+                    <h3>Roofing</h3>
+                    <div class="availability">
+                        <div class="status-dot"></div>
+                        <span class="available-text">12 available</span>
+                    </div>
+                    <p class="price">From $245</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose ProConnect?</h2>
+                <p>Advanced features that set us apart from the competition</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⏰</div>
+                    <h3>Real-Time Availability</h3>
+                    <p>See which contractors are available right now for same-day service</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Instant Quotes</h3>
+                    <p>Get AI-powered price estimates before you even contact a contractor</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Quality Guarantee</h3>
+                    <p>All work is insured and backed by our satisfaction guarantee</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📹</div>
+                    <h3>Video Consultations</h3>
+                    <p>Get expert advice through live video calls before booking</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Top Contractors -->
+    <section class="contractors">
+        <div class="container">
+            <div class="section-header">
+                <h2>Top Rated Professionals</h2>
+                <p>Verified experts with real-time availability</p>
+            </div>
+            
+            <div class="contractors-grid">
+                <div class="contractor-card">
+                    <div class="contractor-header">
+                        <div class="contractor-info">
+                            <h3>Mike's Plumbing Pro</h3>
+                            <p class="contractor-specialty">Emergency Repairs</p>
+                        </div>
+                        <span class="badge badge-available">Available</span>
+                    </div>
+                    
+                    <div class="rating">
+                        <span class="star">★</span>
+                        <span class="rating-text">4.9</span>
+                        <span class="reviews-text">(234 reviews)</span>
+                    </div>
+                    
+                    <div class="contractor-footer">
+                        <div class="response-time">
+                            <span>⏰ Response: < 30 min</span>
+                        </div>
+                        <div class="contractor-actions">
+                            <button class="btn btn-outline btn-sm">💬</button>
+                            <button class="btn btn-primary btn-sm">Contact</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contractor-card">
+                    <div class="contractor-header">
+                        <div class="contractor-info">
+                            <h3>Elite Electric Solutions</h3>
+                            <p class="contractor-specialty">Smart Home Install</p>
+                        </div>
+                        <span class="badge badge-available">Available</span>
+                    </div>
+                    
+                    <div class="rating">
+                        <span class="star">★</span>
+                        <span class="rating-text">4.8</span>
+                        <span class="reviews-text">(189 reviews)</span>
+                    </div>
+                    
+                    <div class="contractor-footer">
+                        <div class="response-time">
+                            <span>⏰ Response: < 1 hour</span>
+                        </div>
+                        <div class="contractor-actions">
+                            <button class="btn btn-outline btn-sm">💬</button>
+                            <button class="btn btn-primary btn-sm">Contact</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contractor-card">
+                    <div class="contractor-header">
+                        <div class="contractor-info">
+                            <h3>CleanPro Services</h3>
+                            <p class="contractor-specialty">Deep Cleaning</p>
+                        </div>
+                        <span class="badge badge-busy">Busy</span>
+                    </div>
+                    
+                    <div class="rating">
+                        <span class="star">★</span>
+                        <span class="rating-text">4.9</span>
+                        <span class="reviews-text">(567 reviews)</span>
+                    </div>
+                    
+                    <div class="contractor-footer">
+                        <div class="response-time">
+                            <span>⏰ Response: Tomorrow</span>
+                        </div>
+                        <div class="contractor-actions">
+                            <button class="btn btn-outline btn-sm">💬</button>
+                            <button class="btn btn-primary btn-sm">Contact</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Get connected with the right professional in minutes</p>
+            </div>
+            
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Describe Your Project</h3>
+                    <p>Tell us what you need and get an instant AI-powered quote estimate</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>See Available Pros</h3>
+                    <p>View real-time availability and compare verified professionals in your area</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Book & Relax</h3>
+                    <p>Schedule instantly or book same-day service with our quality guarantee</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Find Your Perfect Professional?</h2>
+            <p>Join thousands of homeowners who've discovered the easier way to hire contractors</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-white">Find a Contractor</a>
+                <a href="#" class="btn btn-outline-white">Join as a Professional</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">P</div>
+                        <span class="logo-text">ProConnect</span>
+                    </div>
+                    <p>The smart way to connect with trusted home service professionals.</p>
+                    <div class="quality-badge">
+                        <span class="checkmark">✓</span>
+                        <span>Quality Guaranteed</span>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>For Homeowners</h3>
+                    <ul>
+                        <li><a href="#">Find Contractors</a></li>
+                        <li><a href="#">Instant Quotes</a></li>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="#">Help Center</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>For Professionals</h3>
+                    <ul>
+                        <li><a href="#">Join ProConnect</a></li>
+                        <li><a href="#">Pro Dashboard</a></li>
+                        <li><a href="#">Success Stories</a></li>
+                        <li><a href="#">Resources</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 ProConnect. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
