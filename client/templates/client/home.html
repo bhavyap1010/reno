@@ -25,11 +25,12 @@
                     {% if request.GET.q %}
                         <input type="hidden" name="q" value="{{ request.GET.q }}">
                     {% endif %}
-                    <label><input type="checkbox" name="services" value="cleaning"> Cleaning</label>
-                    <label><input type="checkbox" name="services" value="plumbing"> Plumbing</label>
-                    <label><input type="checkbox" name="services" value="electrical"> Electrical</label>
-                    <label><input type="checkbox" name="services" value="landscaping"> Landscaping</label>
-                    <label><input type="checkbox" name="services" value="delivery"> Delivery</label>
+                    {% for service in available_services %}
+                        <label>
+                            <input type="checkbox" name="services" value="{{ service }}">
+                            {{ service|capfirst }}
+                        </label>
+                    {% endfor %}
                     <br>
                     <button type="submit">Apply</button>
                 </form>

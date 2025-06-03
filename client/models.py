@@ -9,6 +9,9 @@ SERVICE_CHOICES = [
     ('electrical', 'Electrical'),
     ('landscaping', 'Landscaping'),
     ('delivery', 'Delivery'),
+    ('painting', 'Painting'),  # <-- Added
+    ('carpentry', 'Carpentry'),
+    ('handyman', 'Handyman'),
     ('other', 'Other'),
 ]
 
