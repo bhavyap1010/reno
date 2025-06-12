@@ -18,14 +18,6 @@ python manage.py runserver
     3. Create `.env.local` file and provide Google Client ID
     4. Run `yarn dev`
 
-# Troubleshooting
-
-## JSONDecodeError at /api/v1/auth/google/callback/
-
-- This error usually means the backend is expecting JSON but received invalid or empty data.
-- Make sure your frontend sends the correct `Content-Type: application/json` header and a valid JSON body.
-- Check your Google OAuth client credentials and redirect URIs.
-- Inspect the backend logs for the exact error details.
-- If using Django REST Framework, ensure your view expects JSON and handles errors gracefully.
-- **Tip:** If you are using a POST request, ensure you are sending data as JSON, not as form data. For example, use `fetch(..., { body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } })` in JavaScript.
-- If the error persists, print the request body in your Django view to debug what is being received.
+GOOGLE_OAUTH_CLIENT_ID='642552962636-7aiu16ona083q7tnogeibavn8j6hh9al.apps.googleusercontent.com'
+GOOGLE_OAUTH_CLIENT_SECRET='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'
+GOOGLE_OAUTH_CALLBACK_URL='http://127.0.0.1:8000/api/v1/auth/google/callback/'

@@ -198,10 +198,11 @@ SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
-        "APPS": [
+        "APP": [
             {
                 "client_id": GOOGLE_OAUTH_CLIENT_ID,
                 "secret": GOOGLE_OAUTH_CLIENT_SECRET,
+                "redirect_uri": "http://127.0.0.1:8000/api/v1/auth/google/callback/",  # Ensure this matches Google's console config
                 "key": "",
             },
         ],
@@ -211,3 +212,6 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
+
+
+REST_USE_JWT = True

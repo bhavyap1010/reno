@@ -12,7 +12,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-
 # if you want to use Authorization Code Grant, use this
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
@@ -20,25 +19,90 @@ class GoogleLogin(SocialLoginView):
     client_class = OAuth2Client
 
 
+import json
+from dj_rest_auth.views import LoginView
+from django.http import HttpResponse
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.response import Response
+import requests
+
+
 class GoogleLoginCallback(APIView):
+    http_method_names = ['post','get']  # Only allow POST
+
+    def post(self, request, *args, **kwargs):
+        code = request.data.get("code")
+        if not code:
+            return Response({"error": "Missing code"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Google token exchange
+        token_url = "https://oauth2.googleapis.com/token"
+        
+        token_data = {
+            "code": code,
+            "client_id": "642552962636-7aiu16ona083q7tnogeibavn8j6hh9al.apps.googleusercontent.com",
+            "client_secret": "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",
+            "redirect_uri": "http://localhost:8000/api/v1/auth/google/callback/",
+            "grant_type": "authorization_code"
+        }
+
+
+        res = requests.post(token_url, data=token_data)
+        tokens = res.json()
+            
+        if "access_token" in tokens:
+            user_info = self.get_user_info(tokens["access_token"])
+            email = user_info.get("email", "unknown")
+            message = f"hi there, your email is {email}"
+            return HttpResponse(message)
+
+        return Response({"error": "OAuth login failed"}, status=status.HTTP_400_BAD_REQUEST)
+
+
     def get(self, request, *args, **kwargs):
-        """Accept callback request from Google OAuth screen.
-        Extract code and send a POST request to Google authentication endpoint.
-
-        If you are building a fullstack application (eg. with React app next to Django)
-        you can place this endpoint in your frontend application to receive
-        the JWT tokens there - and store them in the state
-        """
-
         code = request.GET.get("code")
+        if not code:
+            return Response({"error": "Missing code"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if code is None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # Exchange the code just like in POST
+        token_url = "https://oauth2.googleapis.com/token"
+        
+        #"redirect_uri": "http://127.0.0.1:8000/api/v1/auth/google/callback/",
+        
+        token_data = {
+            "code": code,
+            "client_id": "642552962636-7aiu16ona083q7tnogeibavn8j6hh9al.apps.googleusercontent.com",
+            "client_secret": "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",
+            "redirect_uri": "http://127.0.0.1:8000/api/v1/auth/google/callback/",
+            "grant_type": "authorization_code"
+        }
 
-        token_endpoint_url = urljoin("http://localhost:8000", reverse("google_login"))
-        response = requests.post(url=token_endpoint_url, data={"code": code})
 
-        return Response(response.json(), status=status.HTTP_200_OK)
+        res = requests.post(token_url, data=token_data)
+        tokens = res.json()
+
+        if "access_token" in tokens:
+            user_info = self.get_user_info(tokens["access_token"])
+            email = user_info.get("email", "unknown")
+            return HttpResponse(f"hi there, your email is {email}")
+
+        return Response({"error": "OAuth login failed"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def get_user_info(self, access_token):
+        """Fetch the user's profile info (e.g. email) from Google."""
+        try:
+            response = requests.get(
+                "https://www.googleapis.com/oauth2/v2/userinfo",
+                headers={"Authorization": f"Bearer {access_token}"}
+            )
+            if response.status_code == 200:
+                return response.json()
+        except Exception:
+            pass
+        return {}
+
 
 
 class LoginPage(View):
