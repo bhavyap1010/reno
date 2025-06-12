@@ -26,9 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-d(3&vua#)^pqjxmmj%e)c!n91stk16zf)g@9tg)a)snz3+^q1%"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -53,7 +52,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "dj_rest_auth.registration",
-    "accounts",
+    "client",
 ]
 
 MIDDLEWARE = [
@@ -68,7 +67,7 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 
-ROOT_URLCONF = "app.urls"
+ROOT_URLCONF = "server.urls"
 
 TEMPLATES = [
     {
@@ -86,7 +85,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "app.wsgi.application"
+WSGI_APPLICATION = "server.wsgi.application"
 
 
 # Database
@@ -182,15 +181,9 @@ ACCOUNT_EMAIL_VERIFICATION = "none"  # Do not require email confirmation
 
 
 # django-allauth social
-#GOOGLE_OAUTH_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
-#GOOGLE_OAUTH_CLIENT_SECRET = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET")
-#GOOGLE_OAUTH_CALLBACK_URL = os.getenv("GOOGLE_OAUTH_CALLBACK_URL")
-
-GOOGLE_OAUTH_CLIENT_ID='642552962636-7aiu16ona083q7tnogeibavn8j6hh9al.apps.googleusercontent.com'
-GOOGLE_OAUTH_CLIENT_SECRET='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'
-GOOGLE_OAUTH_CALLBACK_URL='http://127.0.0.1:8000/api/v1/auth/google/callback/'
-
-
+GOOGLE_OAUTH_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
+GOOGLE_OAUTH_CLIENT_SECRET = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET")
+GOOGLE_OAUTH_CALLBACK_URL = os.getenv("GOOGLE_OAUTH_CALLBACK_URL")
 
 # Authenticate if local account with this email address already exists
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
@@ -202,7 +195,7 @@ SOCIALACCOUNT_PROVIDERS = {
             {
                 "client_id": GOOGLE_OAUTH_CLIENT_ID,
                 "secret": GOOGLE_OAUTH_CLIENT_SECRET,
-                "redirect_uri": "http://127.0.0.1:8000/api/v1/auth/google/callback/",  # Ensure this matches Google's console config
+                "redirect_uri": GOOGLE_OAUTH_CALLBACK_URL,  # Ensure this matches Google's console config
                 "key": "",
             },
         ],
@@ -214,4 +207,3 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 
-REST_USE_JWT = True

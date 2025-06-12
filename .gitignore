@@ -91,3 +91,10 @@ venv.bak/
 # Linting
 .pre-commit-config.yaml
 setup.cfg
+
+# Node.js
+node_modules/
+
+# Python cache
+__pycache__/
+**/__pycache__/

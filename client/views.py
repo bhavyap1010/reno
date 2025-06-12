@@ -1,5 +1,3 @@
-from urllib.parse import urljoin
-
 import requests
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
@@ -11,15 +9,6 @@ from django.views import View
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-# if you want to use Authorization Code Grant, use this
-class GoogleLogin(SocialLoginView):
-    adapter_class = GoogleOAuth2Adapter
-    callback_url = settings.GOOGLE_OAUTH_CALLBACK_URL
-    client_class = OAuth2Client
-
-
-import json
 from dj_rest_auth.views import LoginView
 from django.http import HttpResponse
 from rest_framework.views import APIView
@@ -27,6 +16,11 @@ from rest_framework import status
 from rest_framework.response import Response
 import requests
 
+# if you want to use Authorization Code Grant, use this
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = settings.GOOGLE_OAUTH_CALLBACK_URL
+    client_class = OAuth2Client
 
 class GoogleLoginCallback(APIView):
     http_method_names = ['post','get']  # Only allow POST
@@ -41,9 +35,9 @@ class GoogleLoginCallback(APIView):
         
         token_data = {
             "code": code,
-            "client_id": "642552962636-7aiu16ona083q7tnogeibavn8j6hh9al.apps.googleusercontent.com",
-            "client_secret": "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",
-            "redirect_uri": "http://localhost:8000/api/v1/auth/google/callback/",
+            "client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
+            "client_secret": settings.GOOGLE_OAUTH_CLIENT_SECRET,
+            "redirect_uri": settings.GOOGLE_OAUTH_CALLBACK_URL,
             "grant_type": "authorization_code"
         }
 
@@ -68,13 +62,11 @@ class GoogleLoginCallback(APIView):
         # Exchange the code just like in POST
         token_url = "https://oauth2.googleapis.com/token"
         
-        #"redirect_uri": "http://127.0.0.1:8000/api/v1/auth/google/callback/",
-        
         token_data = {
             "code": code,
-            "client_id": "642552962636-7aiu16ona083q7tnogeibavn8j6hh9al.apps.googleusercontent.com",
-            "client_secret": "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",
-            "redirect_uri": "http://127.0.0.1:8000/api/v1/auth/google/callback/",
+            "client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
+            "client_secret": settings.GOOGLE_OAUTH_CLIENT_SECRET,
+            "redirect_uri": settings.GOOGLE_OAUTH_CALLBACK_URL,
             "grant_type": "authorization_code"
         }
 
