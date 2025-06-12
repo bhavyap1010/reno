@@ -27,3 +27,5 @@ python manage.py runserver
 - Check your Google OAuth client credentials and redirect URIs.
 - Inspect the backend logs for the exact error details.
 - If using Django REST Framework, ensure your view expects JSON and handles errors gracefully.
+- **Tip:** If you are using a POST request, ensure you are sending data as JSON, not as form data. For example, use `fetch(..., { body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } })` in JavaScript.
+- If the error persists, print the request body in your Django view to debug what is being received.
