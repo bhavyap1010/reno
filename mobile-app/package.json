@@ -10,10 +10,16 @@
   "resolutions": {
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-native-web": "0.20.0"
+    "react-native-web": "0.20.0",
+    "expo": "^50.0.0",
+    "react-native": "0.73.6",
+    "webpack": "^5.91.0",
+    "webpack-dev-server": "^4.15.1",
+    "@expo/webpack-config": "^19.0.0"
   },
   "dependencies": {
     "babel-preset-expo": "^13.2.0",
+    "crypto-browserify": "^3.12.1",
     "expo": "~53.0.11",
     "expo-auth-session": "^6.2.0",
     "expo-router": "^5.1.0",
@@ -22,7 +28,9 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.72.10",
-    "react-native-web": "0.20.0"
+    "react-native-web": "0.20.0",
+    "stream-browserify": "^3.0.0",
+    "vm-browserify": "^1.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
