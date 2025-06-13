@@ -1,4 +1,4 @@
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
 export default function GoogleCallback() {
@@ -15,12 +15,12 @@ export default function GoogleCallback() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code }),
         });
+
         const result = await res.json();
         console.log(result);
-
         router.replace('/');
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
       }
     })();
   }, [code]);
