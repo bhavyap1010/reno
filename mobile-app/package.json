@@ -7,6 +7,11 @@
     "ios": "expo start --ios",
     "web": "expo start --web"
   },
+  "resolutions": {
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-native-web": "0.20.0"
+  },
   "dependencies": {
     "babel-preset-expo": "^13.2.0",
     "expo": "~53.0.11",
