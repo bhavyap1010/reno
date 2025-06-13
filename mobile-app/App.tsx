@@ -4,6 +4,7 @@ import * as AuthSession from 'expo-auth-session';
 import { useAuthRequest, makeRedirectUri, ResponseType } from 'expo-auth-session';
 import Constants from 'expo-constants';
 import { useEffect } from 'react';
+import { GOOGLE_OAUTH_CLIENT_ID } from '@env';
 
 const discovery = {
   authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
@@ -13,7 +14,7 @@ const discovery = {
 
 export default function App() {
   // Get Google Client ID directly from environment variables
-  const googleClientId = Constants.expoConfig?.extra?.googleClientId || process.env.GOOGLE_OAUTH_CLIENT_ID;
+  const googleClientId = GOOGLE_OAUTH_CLIENT_ID;
 
   const redirectUri = makeRedirectUri();
 

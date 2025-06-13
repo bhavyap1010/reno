@@ -28,6 +28,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.72.10",
+    "react-native-dotenv": "^3.4.11",
     "react-native-web": "0.20.0",
     "stream-browserify": "^3.0.0",
     "vm-browserify": "^1.1.2"
