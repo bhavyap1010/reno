@@ -173,10 +173,11 @@ REST_AUTH = {
     "JWT_AUTH_HTTPONLY": False,  # Makes sure refresh token is sent
 }
 
-# django-allauth
-ACCOUNT_AUTHENTICATION_METHOD = "email"  # Use Email / Password authentication
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_REQUIRED = True
+
+
+# django-allauth (replace deprecated settings)
+ACCOUNT_LOGIN_METHODS = {"email"}  # Use email for login
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']  # Required signup fields
 ACCOUNT_EMAIL_VERIFICATION = "none"  # Do not require email confirmation
 
 
