@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import * as AuthSession from 'expo-auth-session';
 import { useAuthRequest, makeRedirectUri, ResponseType } from 'expo-auth-session';
-//import { googleClientId } from './config';
+import Constants from 'expo-constants';
 import { useEffect } from 'react';
 
 const discovery = {
@@ -11,10 +11,10 @@ const discovery = {
   revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
 };
 
-
-const googleClientId = '642552962636-7aiu16ona083q7tnogeibavn8j6hh9al.apps.googleusercontent.com';
-
 export default function App() {
+  // Get Google Client ID directly from environment variables
+  const googleClientId = Constants.expoConfig?.extra?.googleClientId || process.env.GOOGLE_OAUTH_CLIENT_ID;
+
   const redirectUri = makeRedirectUri();
 
   const [request, response, promptAsync] = useAuthRequest(
