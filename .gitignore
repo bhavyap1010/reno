@@ -98,3 +98,6 @@ node_modules/
 # Python cache
 __pycache__/
 **/__pycache__/
+
+# Expo/React Native config
+app.config.js
