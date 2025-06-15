@@ -16,6 +16,7 @@ export default {
     ],
     extra: {
       googleClientId: "642552962636-7aiu16ona083q7tnogeibavn8j6hh9al.apps.googleusercontent.com"
-    }
+    },
+    scheme: "mobile-app"
   }
 };
