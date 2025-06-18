@@ -1,0 +1,6 @@
+env/
+frontend/
+
+*.pyc
+
+.DS_Store
