@@ -1,0 +1,31 @@
+
+make it such that the user does not go
+    futher if his / her acount is not verified
+
+Replace http://127.0.0.1:8000 with your backend
+    IP if running on a device/emulator.
+
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements.txt
+cd backend
+python manage.py runserver
+
+
+cd frontend
+npm install
+npm start
+
+
+
+take away the styling and push the code
+and publish the landing page for now
+
+create a dotenv file for secret key and find out how to set oauth
+
+
+#CORS_ALLOW_ALL_ORIGINS = True  # for development only; restrict in production
+
+Log in and sign up and published to the admins page (need to verify the user email) (setting up ouath)
+
+permission_classes = [AllowAny]
