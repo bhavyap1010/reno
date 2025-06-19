@@ -1,0 +1,103 @@
+/* Add to existing verification.css */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.loading-container .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.resend-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+}
+
+.resend-button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+
+.resend-button:hover:not(:disabled) {
+    background-color: #2980b9;
+}
+
+.resend-status {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.resend-status.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.resend-status.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.support-text {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.support-text a {
+    color: #3498db;
+    margin-left: 5px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.auth-button.secondary {
+    background-color: #95a5a6;
+}
+
+.auth-button.secondary:hover {
+    background-color: #7f8c8d;
+}
+
+.error-message {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.debug-info {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 20px;
+    font-family: monospace;
+    font-size: 14px;
+    max-height: 200px;
+    overflow: auto;
+}
+
+.debug-info pre {
+    margin: 0;
+    white-space: pre-wrap;
+}

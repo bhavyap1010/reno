@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from allauth.account.models import EmailAddress
+from allauth.account.utils import send_email_confirmation
 
 User = get_user_model()
 
@@ -29,6 +31,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
             account_type=validated_data['account_type'],
-            password=validated_data['password']
+            password=validated_data['password'],
+            is_active=False  # User inactive until email verified
         )
         return user
