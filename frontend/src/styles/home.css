@@ -1,0 +1,25 @@
+.home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.home-title {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 40px;
+}
+
+.home-content {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+.welcome-message {
+    text-align: center;
+    font-size: 18px;
+    color: #34495e;
+    line-height: 1.6;
+}
