@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "frontend-native",
+    "slug": "frontend-native",
+    "version": "1.0.0",
+    "sdkVersion": "48.0.0",
+    "platforms": ["ios", "android", "web"],
+    "extra": {
+      "apiUrl": "http://127.0.0.1:8000",
+      "googleLink": "https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http://localhost:3000&prompt=consent&response_type=token&client_id=642552962636-sva3lieul9tqmi3ag3g4kghba1a8kfjr.apps.googleusercontent.com&scope=openid%20email%20profile"
+    }
+  }
+}

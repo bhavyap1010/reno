@@ -1,75 +1,91 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api";
-import "../styles/auth.css";
 
-const Login = ({ setIsAuthenticated }) => {
-    const [credentials, setCredentials] = useState({
-        username: "",
-        password: "",
-    });
-    const [error, setError] = useState("");
+function Login() {
+    const token = localStorage.getItem('auth_token');
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        if (token) {
+            navigate("/");
+        }
+    }, []);
+
+    const loginWithGoogle = () => {
+        window.location.href = import.meta.env.VITE_GOOGLE_LINK;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
         try {
-            const response = await api.post("accounts/login/", credentials);
-            localStorage.setItem("token", response.data.token);
-            setIsAuthenticated(true);
-            navigate("/home");
+            const response = await fetch(import.meta.env.VITE_API_URL + "/formlogin/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem("auth_token", JSON.stringify(data));
+                    navigate("/");
+                } else {
+                    const errData = await response.json();
+                    setError(errData.detail || "Login failed");
+                }
         } catch (err) {
-            if (err.response) {
-                setError(err.response.data.detail || "Login failed. Please try again.");
-            } else {
-                console.error(err);
-                setError("An unexpected error occurred. Please try again later.");
-            }
+            setError("Login failed");
         }
     };
 
+    const goToRegister = () => {
+        navigate("/register");
+    };
+
     return (
-        <div className="auth-container">
-            <div className="auth-card">
-                <h2 className="auth-title">Login</h2>
-                {error && <div className="auth-error">{error}</div>}
-                <form onSubmit={handleSubmit} className="auth-form">
-                    <div className="form-group">
-                        <label htmlFor="username">Username</label>
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            value={credentials.username}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={credentials.password}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="auth-button">
-                        Login
-                    </button>
-                </form>
-                <p className="auth-footer">
-                    Don't have an account? <a href="/register">Register here</a>
-                </p>
+        <>
+            <form onSubmit={handleSubmit} className="auth_form">
+                <div>
+                    <label htmlFor="email">Email:</label>
+                    <input
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label htmlFor="password">Password:</label>
+                    <input
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </div>
+                {error && <p className="error">{error}</p>}
+                <button type="submit">Sign in</button>
+            </form>
+            <div className="auth_button">
+                <button onClick={loginWithGoogle}>
+                    <i className="fa fa-google" aria-hidden="true"></i>
+                    Sign in with Google
+                </button>
             </div>
-        </div>
+            <div className="auth_button">
+                <button onClick={goToRegister}>
+                    Register
+                </button>
+            </div>
+        </>
     );
-};
+}
 
 export default Login;
