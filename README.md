@@ -17,6 +17,9 @@ Reno is a web application designed to connect clients with businesses, manage se
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple?logo=bootstrap)
 ![Zsh](https://img.shields.io/badge/Zsh-FAFAFA?logo=gnu-bash&logoColor=black)
 
+## 🌐 Live Application
+
+[Reno App on Render](https://reno-app.onrender.com)
 
 ## 🏗️ Features
 - User registration and authentication
