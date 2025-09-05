@@ -9,6 +9,7 @@ charset-normalizer==3.4.2
 constantly==23.10.4
 cryptography==44.0.2
 daphne==4.1.2
+dj-database-url==3.0.1
 Django==5.2
 django-allauth==65.8.1
 django-multiselectfield==0.1.13
@@ -20,6 +21,7 @@ incremental==24.7.2
 oauthlib==3.2.2
 packaging==25.0
 pillow==11.2.1
+psycopg2-binary==2.9.10
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pycparser==2.22
