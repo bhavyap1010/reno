@@ -39,7 +39,7 @@ Reno is a web application designed to connect clients with businesses, manage se
   - `static/` - CSS and images
 - `server/` - Django project settings and configuration
 - `media/` - Uploaded images and files
-- `Landing Page/` - Static landing page
+
 - `db.sqlite3` - SQLite database
 - `manage.py` - Django management script
 
