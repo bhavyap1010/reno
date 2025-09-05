@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     # Add others like facebook, github, etc. if needed
 ]
 
-SITE_ID = 1     # Required for sites framework
+SITE_ID = 2     # Required for sites framework
 
 
 AUTHENTICATION_BACKENDS = [
