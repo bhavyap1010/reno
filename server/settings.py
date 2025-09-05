@@ -93,6 +93,7 @@ MIDDLEWARE = [
 
     'allauth.account.middleware.AccountMiddleware',  # Allauth middleware
     'client.middleware.AccountTypeMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'server.urls'
