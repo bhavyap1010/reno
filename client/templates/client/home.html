@@ -70,7 +70,7 @@
 </div>
 
 <h2 style="padding-left: 20px; padding-top: 30px;">Businesses</h2>
-<div class="scroll-container">
+<div class="scroll-container" style="margin-left: 20px;">
     {% for business in businesses %}
     <div class="card">
         <h3><a href="{% url 'business-detail' business.id %}">{{ business.name }}</a></h3>
@@ -92,7 +92,7 @@
 </div>
 
 <h2 style="padding-left: 20px;">Service Requests</h2>
-<div class="scroll-container">
+<div class="scroll-container" style="margin-left: 20px;">
     {% for request in service_requests %}
     <div class="card">
         <h3>{{ request.title }}</h3>
