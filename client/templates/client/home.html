@@ -38,10 +38,15 @@
         </div>
     </div>
 
-    <!-- Settings Icon -->
-    <button class="icon-button" title="Settings" onclick="toggleSidebar()">
-        <i class="fa-solid fa-cog"></i>
-    </button>
+    <!-- Settings and Dark Mode Icons -->
+    <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+        <button id="dark-mode-toggle" class="icon-button" aria-label="Toggle dark mode">
+            <i id="dark-mode-icon" class="fa-regular fa-moon"></i>
+        </button>
+        <button class="icon-button" title="Settings" onclick="toggleSidebar()">
+            <i class="fa-solid fa-cog"></i>
+        </button>
+    </div>
 </div>
 
 <div id="sidebarOverlay" class="sidebar-overlay">

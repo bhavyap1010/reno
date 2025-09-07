@@ -7,11 +7,16 @@
     <title>Reno</title>
     <link rel="stylesheet" href="{% static 'client/auth.css' %}">
     <link rel="stylesheet" href="{% static 'client/root.css' %}">
-</head>
+        <link rel="stylesheet" href="{% static 'client/dark_mode.css' %}" id="dark-mode-css" disabled>
+    </head>
 <body>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     {% block content %}
     {% endblock %}
+
+        <script src="{% static 'client/dark_mode.js' %}"></script>
 
 </body>
 </html>
